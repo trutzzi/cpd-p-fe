@@ -7,6 +7,7 @@ import NewDetail from './components/NewDetail';
 import CalendarDetail from './components/CalendarDetail';
 import { CalendarProps, TOnSelectItem, dataObj } from './types/EventTypes';
 import { AuthContext } from './App';
+import { useIntl } from 'react-intl';
 
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,8 +34,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   const [detailEvent, setDetailEvent] = React.useState({ id: 1, title: '', description: '', username: '', start: new Date(), end: new Date() });
   const [openDetail, setOpenDetail] = React.useState(false);
   const username = useContext(AuthContext);
-
-
+  const intl = useIntl()
 
   const insertNewEvent = async (event: dataObj) => {
     username && (event = { ...event, userId: userId });
@@ -135,6 +135,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
       <ToastContainer />
       <h3 style={{ marginBottom: '10px', textTransform: 'capitalize' }}>
         {username ? `${username} 's calendar` : 'Guest calendar'}
+        <p>{intl.messages.MyCalendar}</p>
       </h3 >
       {
         loaded ? <Calendar

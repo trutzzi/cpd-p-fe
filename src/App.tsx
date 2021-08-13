@@ -1,6 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
+import { IntlProvider } from 'react-intl'
 import { AppBar, Toolbar, Typography, MenuItem, IconButton, Breadcrumbs, Menu, Container } from '@material-ui/core';
 import { Link as LinkUi, AccountCircle, Menu as MenuIcon, Home as HomeIcon } from '@material-ui/icons';
 import CalendarUi from './Calendar';
@@ -15,6 +16,16 @@ import 'moment/min/locales';
 import './App.css';
 import moment from 'moment';
 
+function loadMessages(locale: any): any {
+  switch (locale) {
+    case "ro":
+      return import("./lang/ro.json");
+    case "en":
+      return import("./lang/en.json");
+    default:
+      return import("./lang/en.json");
+  }
+}
 export const AuthContext = React.createContext(null);
 
 function App() {
@@ -22,7 +33,11 @@ function App() {
   const [username, setUsername] = useState(null);
   const [userId, setUserId] = useState(null);
   const [openMenu, setOpenMenu] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const [messages, setMessages] = useState<any>(loadMessages(locale));
+  useEffect(() => loadMessages(locale).then((data: any) => setMessages(data)), [locale]);
+
   const open = Boolean(anchorEl);
 
   const handleMenu = (event: any) => {
@@ -108,51 +123,57 @@ function App() {
     <div className={openMenu ? 'isMenuOpened App' : 'App'}>
       <AuthContext.Provider value={username}>
         <ThemeProvider theme={theme}>
-          <Router>
-            <div className="page">
-              <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
-              <div className="page-container">
-                <AppBar position="static">
-                  <Toolbar>
-                    <div className="nav-container">
-                      <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
-                        <MenuIcon />
-                      </IconButton>
-                      <Typography variant="h4">
-                        Appointments
-                      </Typography>
-                      <div >
-                        {username ? renderLoggedInNav() : 'Guest'}
+          <IntlProvider
+            locale={locale}
+            defaultLocale="en"
+            messages={messages}
+          >
+            <Router>
+              <div className="page">
+                <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
+                <div className="page-container">
+                  <AppBar position="static">
+                    <Toolbar>
+                      <div className="nav-container">
+                        <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
+                          <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h4">
+                          Appointments
+                        </Typography>
+                        <div >
+                          {username ? renderLoggedInNav() : 'Guest'}
+                        </div>
                       </div>
-                    </div>
-                  </Toolbar>
-                </AppBar>
-                <Container fixed  >
-                  <Switch>
+                    </Toolbar>
+                  </AppBar>
+                  <Container fixed  >
+                    <Switch>
 
-                    <Route exact path="/">
+                      <Route exact path="/">
 
-                      <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                        <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                        <Typography color="textPrimary">Home</Typography>
-                      </Breadcrumbs>
+                        <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
+                          <HomeIcon style={{ fontSize: 23 }} color="primary" />
+                          <Typography color="textPrimary">Home</Typography>
+                        </Breadcrumbs>
 
-                      <CalendarUi username={username} userId={userId} onLocale={locale} />
-                    </Route>
+                        <CalendarUi username={username} userId={userId} onLocale={locale} />
+                      </Route>
 
-                    <Route exact path="/signup">
+                      <Route exact path="/signup">
 
-                      <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                        <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                        <Typography color="textPrimary">Member Areea</Typography>
-                      </Breadcrumbs>
-                      {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
-                    </Route>
-                  </Switch>
-                </Container>
+                        <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
+                          <HomeIcon style={{ fontSize: 23 }} color="primary" />
+                          <Typography color="textPrimary">Member Areea</Typography>
+                        </Breadcrumbs>
+                        {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
+                      </Route>
+                    </Switch>
+                  </Container>
+                </div>
               </div>
-            </div>
-          </Router>
+            </Router>
+          </IntlProvider>
         </ThemeProvider>
       </AuthContext.Provider>
     </div >

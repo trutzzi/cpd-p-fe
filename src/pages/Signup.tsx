@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import { ToastContainer, toast } from 'react-toastify';
 import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
 import Container from '@material-ui/core/Container';
+import { useIntl } from 'react-intl';
 
 
 type SignupProps = {
@@ -21,6 +22,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Signup: FC<SignupProps> = ({ signIn }) => {
+
+  const intl = useIntl();
 
   const [login, setLogin] = useState({
     username: null,
@@ -100,7 +103,9 @@ const Signup: FC<SignupProps> = ({ signIn }) => {
           <Grid item xs={12}>
             <Grid container justify="space-between" spacing={2}>
               <Grid>
-                <h1>Sign Up</h1>
+                  {/* TODO: How consum data from intl  */}
+                {/* <h1>{intl.messages.nested.deeply.key}</h1> */}
+                <h1>Sign up</h1>
                 <form noValidate autoComplete="off">
                   <TextField name="username" onChange={(e) => handleSignUpInput(e)} label="Username" />
                   <br />

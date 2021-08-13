@@ -16,12 +16,14 @@
         "@types/react": "^17.0.11",
         "@types/react-big-calendar": "^0.31.1",
         "@types/react-dom": "^17.0.7",
+        "@types/react-intl": "^3.0.0",
         "@types/react-router-dom": "^5.1.7",
         "cypress": "^8.2.0",
         "moment": "^2.29.1",
         "react": "^17.0.2",
         "react-big-calendar": "^0.33.5",
         "react-dom": "^17.0.2",
+        "react-intl": "^5.20.7",
         "react-moment": "^1.1.1",
         "react-router-dom": "^5.2.0",
         "react-scripts": "4.0.3",
@@ -33,13 +35,21 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "compile": "formatjs compile",
+        "extract": "formatjs extract"
     },
     "eslintConfig": {
         "extends": [
             "react-app",
             "react-app/jest"
-        ]
+        ],
+        "plugins": [
+            "formatjs"
+        ],
+        "rules": {
+            "formatjs/no-offset": "error"
+        }
     },
     "browserslist": {
         "production": [
@@ -52,5 +62,12 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@formatjs/cli": "^4.2.30",
+        "@formatjs/ts-transformer": "^3.4.7",
+        "babel-plugin-formatjs": "^10.3.4",
+        "eslint": "^7.32.0",
+        "eslint-plugin-formatjs": "^2.17.3"
     }
 }

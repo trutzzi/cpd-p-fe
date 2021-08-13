@@ -1,0 +1,15 @@
+{
+    "App": {
+        "Title": "Programari"
+    },
+    "MyCalendar": "My Calendar",
+    "Login": {
+        "Form": "Login"
+    },
+    "nested": {
+        "deeply": {
+            "key": "Hey, this key is nested even deeper."
+        },
+        "key": "This key is nested inside a namespace."
+    }
+}
