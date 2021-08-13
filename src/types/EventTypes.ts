@@ -15,6 +15,7 @@ export type CalendarProps = {
 export type TOnSelectItem = {
   title: string,
   description: string,
+  id: number,
   start: Date,
   end: Date,
   users: any
@@ -28,6 +29,7 @@ export type TNewDetail = {
 export type detailEventIn = {
   title: string,
   description: string,
+  id: number,
   start: Date,
   end: Date,
   username: any

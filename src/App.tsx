@@ -1,20 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Menu from '@material-ui/core/Menu';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import LinkUi from '@material-ui/core/Link';
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import MenuIcon from '@material-ui/icons/Menu';
-import HomeIcon from '@material-ui/icons/Home';
-import CalendarUi from './components/Calendar';
+import { AppBar, Toolbar, Typography, MenuItem, IconButton, Breadcrumbs, Menu, Container } from '@material-ui/core';
+import { Link as LinkUi, AccountCircle, Menu as MenuIcon, Home as HomeIcon } from '@material-ui/icons';
+import CalendarUi from './Calendar';
 import Navigation from './components/Navigation'
 import Signup from './pages/Signup';
 import { toast } from 'react-toastify';
@@ -22,10 +11,11 @@ import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';
 import 'moment/min/locales';
 
-
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
+
+export const AuthContext = React.createContext(null);
 
 function App() {
   const [locale, setLocale] = useState('en');
@@ -44,6 +34,7 @@ function App() {
   };
 
   const onLogOut = async () => {
+    console.log("Do logout");
     const token = localStorage.getItem('id');
     const body = {
       method: 'POST',
@@ -52,9 +43,10 @@ function App() {
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     }
-    const req = await fetch(`${LOGOUT_REQ}${token}`, body);
-    setUsername(null);
+    const req = await fetch(LOGOUT_REQ + token, body);
+    const resp = await req.json();
     window.localStorage.clear()
+    setUsername(null);
     toast.success('user logout successfully');
   };
 
@@ -114,57 +106,55 @@ function App() {
   return (
 
     <div className={openMenu ? 'isMenuOpened App' : 'App'}>
-      <ThemeProvider theme={theme}>
-        <Router>
-          <div className="page">
-            <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
-            <div className="page-container">
-              <AppBar position="static">
-                <Toolbar>
-                  <div className="nav-container">
-                    <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
-                      <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h4">
-                      Appointments
-                    </Typography>
-                    <div >
-                      {username ? renderLoggedInNav() : 'Guest'}
+      <AuthContext.Provider value={username}>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <div className="page">
+              <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
+              <div className="page-container">
+                <AppBar position="static">
+                  <Toolbar>
+                    <div className="nav-container">
+                      <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
+                        <MenuIcon />
+                      </IconButton>
+                      <Typography variant="h4">
+                        Appointments
+                      </Typography>
+                      <div >
+                        {username ? renderLoggedInNav() : 'Guest'}
+                      </div>
                     </div>
-                  </div>
-                </Toolbar>
-              </AppBar>
-              <Container fixed  >
-                <Switch>
+                  </Toolbar>
+                </AppBar>
+                <Container fixed  >
+                  <Switch>
 
-                  <Route exact path="/">
+                    <Route exact path="/">
 
-                    <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                      <LinkUi color="inherit" href="/">
+                      <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
                         <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                      </LinkUi>
-                      <Typography color="textPrimary">Home</Typography>
-                    </Breadcrumbs>
+                        <Typography color="textPrimary">Home</Typography>
+                      </Breadcrumbs>
 
-                    <CalendarUi username={username} userId={userId} onLocale={locale} />
-                  </Route>
+                      <CalendarUi username={username} userId={userId} onLocale={locale} />
+                    </Route>
 
-                  <Route exact path="/signup">
+                    <Route exact path="/signup">
 
-                    <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                      <LinkUi color="inherit" href="/">
+                      <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
                         <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                      </LinkUi>
-                      <Typography color="textPrimary">Member Areea</Typography>
-                    </Breadcrumbs>
-                    {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
-                  </Route>
-                </Switch>
-              </Container>
+                        <Typography color="textPrimary">Member Areea</Typography>
+                      </Breadcrumbs>
+                      {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
+                    </Route>
+                  </Switch>
+                </Container>
+              </div>
             </div>
-          </div>
-        </Router>
-      </ThemeProvider>
+          </Router>
+        </ThemeProvider>
+      </AuthContext.Provider>
     </div >
   );
 }
