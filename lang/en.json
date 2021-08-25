@@ -1,2 +1,42 @@
 {
+  "appTitle": {
+    "defaultMessage": "Appointments"
+  },
+  "guest": {
+    "defaultMessage": "Guest"
+  },
+  "home": {
+    "defaultMessage": "Home"
+  },
+  "homeLink": {
+    "defaultMessage": "Home",
+    "description": "Home link"
+  },
+  "logout": {
+    "defaultMessage": "Logut",
+    "description": "Logout"
+  },
+  "memberArea": {
+    "defaultMessage": "Member area"
+  },
+  "myCalendar": {
+    "defaultMessage": "{username}'s calendar",
+    "description": "myCalendar"
+  },
+  "myCalendarGuest": {
+    "defaultMessage": "Calendar",
+    "description": "Calendar"
+  },
+  "selectLang": {
+    "defaultMessage": "Select language",
+    "description": "Select Language display text"
+  },
+  "signupLink": {
+    "defaultMessage": "Signup",
+    "description": "Signup link"
+  },
+  "xj/0Ok": {
+    "defaultMessage": "Language has been set to {lang}",
+    "description": "Language set message"
+  }
 }

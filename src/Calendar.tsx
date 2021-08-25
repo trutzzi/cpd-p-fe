@@ -1,13 +1,17 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import React, { useState, FC, useEffect, useContext } from 'react';
-import { NEW_REQ, DATA_REQ, DELETE_EVENT } from './constants/constants';
+import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from './constants/constants';
 import { ToastContainer, toast } from 'react-toastify';
 import NewDetail from './components/NewDetail';
 import CalendarDetail from './components/CalendarDetail';
 import { CalendarProps, TOnSelectItem, dataObj } from './types/EventTypes';
 import { AuthContext } from './App';
 import { useIntl } from 'react-intl';
+import { IntlProvider, FormattedMessage } from 'react-intl'
+
+import { bodyEditType } from './components/CalendarDetail';
+
 
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,6 +28,10 @@ type itemRequest = {
   emailVerified: boolean | null
 }
 
+const DEFAULT_DATA = {
+  id: 1, title: '', confirmed: false, description: '', username: '', start: new Date(), end: new Date()
+}
+
 const localizer = momentLocalizer(moment);
 
 const CalendarUi: FC<CalendarProps> = ({ userId }) => {
@@ -31,9 +39,9 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   const [data, setData] = useState([]);
   const [openNew, setOpenNew] = useState(false);
   const [newDetail, setNewDetail] = useState({ start: new Date(), end: new Date() });
-  const [detailEvent, setDetailEvent] = React.useState({ id: 1, title: '', description: '', username: '', start: new Date(), end: new Date() });
+  const [detailEvent, setDetailEvent] = React.useState(DEFAULT_DATA);
   const [openDetail, setOpenDetail] = React.useState(false);
-  const username = useContext(AuthContext);
+  const username = useContext(AuthContext).username;
   const intl = useIntl()
 
   const insertNewEvent = async (event: dataObj) => {
@@ -77,6 +85,26 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     }
   }
 
+  const onUpdateEvent = async (id: number, body: bodyEditType, close: any) => {
+    console.log('deleting')
+    const token = localStorage.getItem('id')
+    const req = await fetch(`${UPDATE_EVENT}${id}?access_token=${token}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (req.status === 200) {
+      toast.info('Event ' + id + ' has been updated')
+      close();
+      OpenDetailClose();
+      fetchData();
+    } else if (req.status === 401) {
+      toast.error('This event is not yours');
+    }
+  }
+
   const fetchData = async () => {
     const req = await fetch(DATA_REQ);
     const res = await req.json();
@@ -105,12 +133,15 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     setOpenNew(false);
   };
 
+
   const handleEventClick = (range: TOnSelectItem) => {
+    console.log(range)
     setDetailEvent({
       id: range.id,
       title: range.title,
       start: range.start,
       end: range.end,
+      confirmed: range.confirmed,
       description: range.description,
       username: range.users.username
     });
@@ -134,8 +165,22 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     <div>
       <ToastContainer />
       <h3 style={{ marginBottom: '10px', textTransform: 'capitalize' }}>
-        {username ? `${username} 's calendar` : 'Guest calendar'}
-        <p>{intl.messages.MyCalendar}</p>
+        {username ?
+          <FormattedMessage
+            id="myCalendar"
+            defaultMessage="{username}'s calendar"
+            description="myCalendar"
+            values={
+              {
+                username,
+              }
+            }
+          /> :
+          <FormattedMessage
+            id="myCalendarGuest"
+            defaultMessage="Calendar"
+            description="Calendar"
+          />}
       </h3 >
       {
         loaded ? <Calendar
@@ -150,7 +195,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
           }
         /> : 'Not loaded'}
       <NewDetail onNewEvent={insertNewEvent} OpenDetailClose={OpenNewClose} startDate={newDetail.start} endDate={newDetail.end} open={openNew} />
-      <CalendarDetail onDelete={onDeleteEvent} id={detailEvent.id} username={detailEvent.username} OpenDetailClose={OpenDetailClose} title={detailEvent.title} start={detailEvent.start} end={
+      <CalendarDetail onUpdate={(id, body, close) => onUpdateEvent(id, body, close)} confirmed={detailEvent.confirmed} onDelete={onDeleteEvent} id={detailEvent.id} username={detailEvent.username} OpenDetailClose={OpenDetailClose} title={detailEvent.title} start={detailEvent.start} end={
         detailEvent.end} description={detailEvent.description} open={openDetail} />
       <br />
       <br />

@@ -1,9 +1,18 @@
 {
-    "App": {
-        "Title": "Programari"
+    "Uhr2IQ": {
+        "defaultMessage": "Delogare",
+        "description": "Delogare"
     },
-    "MyCalendar": "Calendarul",
-    "Login": {
-        "Form": "Autentificare"
+    "appTitle": {
+        "defaultMessage": "Programari"
+    },
+    "guest": {
+        "defaultMessage": "Vizitator"
+    },
+    "home": {
+        "defaultMessage": "Acasa"
+    },
+    "memberArea": {
+        "defaultMessage": "Zona membrii"
     }
 }

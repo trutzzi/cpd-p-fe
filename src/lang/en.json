@@ -1,15 +1,30 @@
 {
-    "App": {
-        "Title": "Programari"
-    },
-    "MyCalendar": "My Calendar",
-    "Login": {
-        "Form": "Login"
-    },
-    "nested": {
-        "deeply": {
-            "key": "Hey, this key is nested even deeper."
-        },
-        "key": "This key is nested inside a namespace."
-    }
+  "appTitle": {
+    "defaultMessage": "Appointments"
+  },
+  "guest": {
+    "defaultMessage": "Guest"
+  },
+  "home": {
+    "defaultMessage": "Home"
+  },
+  "homeLink": {
+    "defaultMessage": "Home",
+    "description": "Home link"
+  },
+  "logout": {
+    "defaultMessage": "Logut",
+    "description": "Logout"
+  },
+  "memberArea": {
+    "defaultMessage": "Member area"
+  },
+  "selectLang": {
+    "defaultMessage": "Select language",
+    "description": "Select Language display text"
+  },
+  "signupLink": {
+    "defaultMessage": "Signup",
+    "description": "Signup link"
+  }
 }

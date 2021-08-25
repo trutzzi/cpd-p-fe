@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
+import * as ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
-import { IntlProvider } from 'react-intl'
 import { AppBar, Toolbar, Typography, MenuItem, IconButton, Breadcrumbs, Menu, Container } from '@material-ui/core';
 import { Link as LinkUi, AccountCircle, Menu as MenuIcon, Home as HomeIcon } from '@material-ui/icons';
 import CalendarUi from './Calendar';
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';
 import 'moment/min/locales';
+import { IntlProvider, FormattedMessage } from 'react-intl'
 
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
@@ -18,24 +19,27 @@ import moment from 'moment';
 
 function loadMessages(locale: any): any {
   switch (locale) {
-    case "ro":
-      return import("./lang/ro.json");
     case "en":
-      return import("./lang/en.json");
+      return import("./compiled-lang/en.json");
+    case "ro":
+      return import("./compiled-lang/ro.json");
     default:
-      return import("./lang/en.json");
+      return import("./compiled-lang/en.json");
   }
 }
-export const AuthContext = React.createContext(null);
+
+
+export const AuthContext = React.createContext({ username: null, role: null });
 
 function App() {
   const [locale, setLocale] = useState('en');
   const [username, setUsername] = useState(null);
+  const [role, setRole] = useState(null);
   const [userId, setUserId] = useState(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-
   const [messages, setMessages] = useState<any>(loadMessages(locale));
+
   useEffect(() => loadMessages(locale).then((data: any) => setMessages(data)), [locale]);
 
   const open = Boolean(anchorEl);
@@ -62,6 +66,7 @@ function App() {
     const resp = await req.json();
     window.localStorage.clear()
     setUsername(null);
+    setRole(null);
     toast.success('user logout successfully');
   };
 
@@ -74,6 +79,7 @@ function App() {
     const token = localStorage.getItem('id');
     const req = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
     const res = await req.json();
+    console.log(res);
     setUserId(res.id);
     setUsername(res.username);
   }
@@ -83,8 +89,21 @@ function App() {
     const valAndTxt = e.target.value.split('-');
     moment.locale(valAndTxt[0]);
     setLocale(valAndTxt[0]);
-    toast.success(`Language has been set to ${valAndTxt[1]}`)
+    toast.success(
+
+      <FormattedMessage
+        id="languageText"
+        description='Language set message'
+        defaultMessage='Language has been set to {lang}'
+        values={
+          {
+            lang: valAndTxt[1],
+          } // Values should be an object literal, but not necessarily every value inside
+        }
+      />
+    )
   }
+
   const renderLoggedInNav = () => {
     return (
       <>
@@ -112,7 +131,13 @@ function App() {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem onClick={onLogOut}>Logout</MenuItem>
+          <MenuItem onClick={onLogOut}>
+            <FormattedMessage
+              id="logout"
+              defaultMessage="Logut"
+              description="Logout"
+            />
+          </MenuItem>
         </Menu>
       </>
     )
@@ -121,7 +146,7 @@ function App() {
   return (
 
     <div className={openMenu ? 'isMenuOpened App' : 'App'}>
-      <AuthContext.Provider value={username}>
+      <AuthContext.Provider value={{ username, role }}>
         <ThemeProvider theme={theme}>
           <IntlProvider
             locale={locale}
@@ -139,10 +164,17 @@ function App() {
                           <MenuIcon />
                         </IconButton>
                         <Typography variant="h4">
-                          Appointments
+                          <FormattedMessage
+                            id="appTitle"
+                            defaultMessage="Appointments"
+                          />
                         </Typography>
                         <div >
-                          {username ? renderLoggedInNav() : 'Guest'}
+                          {username ? renderLoggedInNav() :
+                            <FormattedMessage
+                              id="guest"
+                              defaultMessage="Guest"
+                            />}
                         </div>
                       </div>
                     </Toolbar>
@@ -154,7 +186,11 @@ function App() {
 
                         <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
                           <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                          <Typography color="textPrimary">Home</Typography>
+                          <Typography color="textPrimary">
+                            <FormattedMessage
+                              id="home"
+                              defaultMessage="Home"
+                            /></Typography>
                         </Breadcrumbs>
 
                         <CalendarUi username={username} userId={userId} onLocale={locale} />
@@ -164,7 +200,11 @@ function App() {
 
                         <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
                           <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                          <Typography color="textPrimary">Member Areea</Typography>
+                          <Typography color="textPrimary">
+                            <FormattedMessage
+                              id="memberArea"
+                              defaultMessage="Member area"
+                            /></Typography>
                         </Breadcrumbs>
                         {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
                       </Route>

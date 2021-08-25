@@ -18,7 +18,8 @@ export type TOnSelectItem = {
   id: number,
   start: Date,
   end: Date,
-  users: any
+  users: any,
+  confirmed: boolean
 }
 
 export type TNewDetail = {

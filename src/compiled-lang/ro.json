@@ -1,0 +1,56 @@
+{
+    "appTitle": [{
+        "type": 0,
+        "value": "Programari"
+    }],
+    "guest": [{
+        "type": 0,
+        "value": "Vizitator"
+    }],
+    "home": [{
+        "type": 0,
+        "value": "Acasa"
+    }],
+    "homeLink": [{
+        "type": 0,
+        "value": "Acasa"
+    }],
+    "logout": [{
+        "type": 0,
+        "value": "Delogare"
+    }],
+    "memberArea": [{
+        "type": 0,
+        "value": "Zona membrii"
+    }],
+    "myCalendar": [{
+            "type": 1,
+            "value": "username"
+        },
+        {
+            "type": 0,
+            "value": "Calendar"
+        }
+    ],
+    "myCalendarGuest": [{
+        "type": 0,
+        "value": "Calendar"
+    }],
+    "selectLang": [{
+        "type": 0,
+        "value": "Selecteaza limba"
+    }],
+    "signupLink": [{
+        "type": 0,
+        "value": "Inregistrare"
+    }],
+    "languageText": [{
+            "type": 0,
+            "value": "Limba a fost selectata cu "
+        },
+        {
+            "type": 1,
+            "value": "lang"
+        }
+    ]
+}
