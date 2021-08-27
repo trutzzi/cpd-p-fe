@@ -9,8 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { DATA_REQ } from './constants/constants';
+import Moment from 'moment';
 import { useEffect } from 'react';
-import { StringLiteral } from 'typescript';
 
 
 interface Column {
@@ -18,6 +18,7 @@ interface Column {
   label: string;
   minWidth?: number;
   align?: 'right';
+  format?: (value: string) => string;
 }
 
 const columns: Column[] = [
@@ -28,12 +29,14 @@ const columns: Column[] = [
     label: 'Start date',
     minWidth: 200,
     align: 'right',
+    format: (value: string) => Moment(value).format('DD-MM-yyyy'),
   },
   {
     id: 'end',
     label: 'End date',
     minWidth: 200,
     align: 'right',
+    format: (value: string) => Moment(value).format('DD-MM-yyyy'),
   },
   {
     id: 'description',
@@ -70,7 +73,7 @@ interface EventRequestType {
 }
 
 function createData(id: number, title: string, start: Date, end: Date, description: string, userId: any, username: string): EventType {
-  return { id, title, start, end, description, userId, username };
+  return { id, title, start, end, description , userId, username };
 }
 
 const useStyles = makeStyles({
@@ -116,7 +119,6 @@ export default function StickyHeadTable() {
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
                 </TableCell>
               ))}
             </TableRow>
@@ -127,9 +129,10 @@ export default function StickyHeadTable() {
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.title}>
                   {columns.map((column) => {
                     const value = row[column.id];
+                    console.log(value)
                     return (
                       <TableCell key={column.id} align={column.align}>
-                        {value}
+                        {column.format && typeof value === 'string' ? column.format(value) : value}
                       </TableCell>
                     );
                   })}
