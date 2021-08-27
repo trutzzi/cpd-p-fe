@@ -1,48 +1,55 @@
 {
-    "appTitle": {
-        "defaultMessage": "Appointments"
-    },
-    "guest": {
-        "defaultMessage": "Guest"
-    },
-    "home": {
-        "defaultMessage": "Home"
-    },
-    "homeLink": {
-        "defaultMessage": "Home",
-        "description": "Home link"
-    },
-    "languageText": {
-        "defaultMessage": "Language has been set to {lang}",
-        "description": "Language set message"
-    },
-    "logout": {
-        "defaultMessage": "Logut",
-        "description": "Logout"
-    },
-    "memberArea": {
-        "defaultMessage": "Member area"
-    },
-    "myCalendar": {
-        "defaultMessage": "{username}'s calendar",
-        "description": "myCalendar"
-    },
-    "myCalendarGuest": {
-        "defaultMessage": "Calendar",
-        "description": "Calendar"
-    },
-    "selectLang": {
-        "defaultMessage": "Select language",
-        "description": "Select Language display text"
-    },
-    "signInTitle": {
-        "defaultMessage": "Sign in"
-    },
-    "signUpTitle": {
-        "defaultMessage": "Sign up"
-    },
-    "signupLink": {
-        "defaultMessage": "Signup",
-        "description": "Signup link"
-    }
+  "Events": {
+    "defaultMessage": "Events"
+  },
+  "appTitle": {
+    "defaultMessage": "Appointments"
+  },
+  "evenstLink": {
+    "defaultMessage": "Events",
+    "description": "Events link"
+  },
+  "guest": {
+    "defaultMessage": "Guest"
+  },
+  "home": {
+    "defaultMessage": "Home"
+  },
+  "homeLink": {
+    "defaultMessage": "Home",
+    "description": "Home link"
+  },
+  "languageText": {
+    "defaultMessage": "Language has been set to {lang}",
+    "description": "Language set message"
+  },
+  "logout": {
+    "defaultMessage": "Logut",
+    "description": "Logout"
+  },
+  "memberArea": {
+    "defaultMessage": "Member area"
+  },
+  "myCalendar": {
+    "defaultMessage": "{username}'s calendar",
+    "description": "myCalendar"
+  },
+  "myCalendarGuest": {
+    "defaultMessage": "Calendar",
+    "description": "Calendar"
+  },
+  "selectLang": {
+    "defaultMessage": "Select language",
+    "description": "Select Language display text"
+  },
+  "signInTitle": {
+    "defaultMessage": "Sign in"
+  },
+  "signUpTitle": {
+    "defaultMessage": "Sign up"
+  },
+  "signupLink": {
+    "defaultMessage": "Signup",
+    "description": "Signup link"
+  }
 }

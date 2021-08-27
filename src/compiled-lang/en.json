@@ -1,8 +1,20 @@
 {
+  "Events": [
+    {
+      "type": 0,
+      "value": "Events"
+    }
+  ],
   "appTitle": [
     {
       "type": 0,
       "value": "Appointments"
+    }
+  ],
+  "evenstLink": [
+    {
+      "type": 0,
+      "value": "Events"
     }
   ],
   "guest": [

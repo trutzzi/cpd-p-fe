@@ -11,7 +11,9 @@ import TableRow from '@material-ui/core/TableRow';
 import { DATA_REQ } from './constants/constants';
 import Moment from 'moment';
 import { useEffect } from 'react';
-
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { FormattedMessage } from 'react-intl'
 
 interface Column {
   id: 'id' | 'title' | 'start' | 'end' | 'description' | 'userId';
@@ -22,8 +24,16 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'id', label: 'Id', minWidth: 100 },
-  { id: 'title', label: 'Title', minWidth: 200 },
+  {
+    id: 'id',
+    label: 'Id',
+    minWidth: 100
+  },
+  {
+    id: 'title',
+    label: 'Title',
+    minWidth: 200
+  },
   {
     id: 'start',
     label: 'Start date',
@@ -73,7 +83,7 @@ interface EventRequestType {
 }
 
 function createData(id: number, title: string, start: Date, end: Date, description: string, userId: any, username: string): EventType {
-  return { id, title, start, end, description , userId, username };
+  return { id, title, start, end, description, userId, username };
 }
 
 const useStyles = makeStyles({
@@ -108,7 +118,13 @@ export default function StickyHeadTable() {
   }, [])
 
   return (
-    <Paper className={classes.root}>
+    <Grid>
+      <Typography style={{ marginBottom: 20, marginTop: 10 }} variant="h3" component="h3">
+        <FormattedMessage
+          id="Events"
+          defaultMessage="Evenimente"
+        />
+      </Typography>
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -119,6 +135,7 @@ export default function StickyHeadTable() {
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
+                  {column.label}
                 </TableCell>
               ))}
             </TableRow>
@@ -142,6 +159,6 @@ export default function StickyHeadTable() {
           </TableBody>
         </Table>
       </TableContainer>
-    </Paper>
+    </Grid>
   );
 }

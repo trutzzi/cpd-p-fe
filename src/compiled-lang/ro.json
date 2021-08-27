@@ -52,5 +52,13 @@
             "type": 1,
             "value": "lang"
         }
-    ]
+    ],
+    "Events": [{
+        "type": 0,
+        "value": "Evenimente"
+    }],
+    "evenstLink": [{
+        "type": 0,
+        "value": "Evenimente"
+    }]
 }

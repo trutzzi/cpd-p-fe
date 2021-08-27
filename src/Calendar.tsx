@@ -2,7 +2,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import React, { useState, FC, useEffect, useContext } from 'react';
 import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from './constants/constants';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import NewDetail from './components/NewDetail';
 import CalendarDetail from './components/CalendarDetail';
 import { CalendarProps, TOnSelectItem, dataObj } from './types/EventTypes';
@@ -115,7 +115,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     setData(procesingRes);
     setLoaded(true);
   }
-  
+
   useEffect(() => {
     fetchData();
     const refreshTime = setInterval(() => {
@@ -163,7 +163,6 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   }
   return (
     <div>
-      <ToastContainer />
       <h3 style={{ marginBottom: '10px', textTransform: 'capitalize' }}>
         {username ?
           <FormattedMessage

@@ -8,7 +8,7 @@ import Navigation from './components/Navigation'
 import Breadcrump from './components/Breadcrump';
 import Signup from './pages/Signup';
 import EventsPage from './EventsPage';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';
 import 'moment/min/locales';
@@ -198,6 +198,7 @@ function App() {
                 </div>
               </Router>
             </MemoryRouter>
+            <ToastContainer />
           </IntlProvider>
         </ThemeProvider>
       </AuthContext.Provider>
