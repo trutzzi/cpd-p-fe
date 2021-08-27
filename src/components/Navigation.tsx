@@ -8,14 +8,18 @@ import { FormattedMessage } from 'react-intl'
 import { useIntl } from 'react-intl';
 
 
-type NavigationProps = {
+interface NavigationProps {
   username: string | null,
   toggleNav: React.Dispatch<React.SetStateAction<boolean>>
-  onChangeLanguage: (e: React.ChangeEvent<any>) => void;
+  onChangeLanguage: (e: React.ChangeEvent<{
+    name?: string | undefined;
+    value: unknown;
+  }>) => void;
 }
 
 const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage }) => {
   const intl = useIntl()
+
   return (
     <>
       <nav className="navigation">
@@ -26,6 +30,13 @@ const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage
                 id="homeLink"
                 defaultMessage="Home"
                 description="Home link"
+              />
+            </NavLink ></li>
+            <li><NavLink onClick={() => toggleNav(false)} exact activeClassName='active' to="/events">
+              <FormattedMessage
+                id="evenstLink"
+                defaultMessage="Events"
+                description="Events link"
               />
             </NavLink ></li>
             {!username && <li><NavLink onClick={() => toggleNav(false)} exact activeClassName='active' to="/signup">

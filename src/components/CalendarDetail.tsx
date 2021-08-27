@@ -27,6 +27,9 @@ function getModalStyle() {
     top: `${top}%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column' as 'column'
   };
 }
 
@@ -80,8 +83,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
     setConfirmEdit(confirmed ? 1 : 0);
   }, [title, description, confirmed]);
 
-  console.log(descriptionEdit)
-
   const initUpdate = () => {
     const body: bodyEditType = {
       title: titleEdit,
@@ -91,7 +92,7 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
       confirmed: confirmEdit
     };
     console.log(body)
-    title && description && start && end && onUpdate(id, body, setEditMode);
+    onUpdate(id, body, setEditMode);
   }
 
   const classes = useStyles();
@@ -99,7 +100,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
   const [modalStyle] = useState(getModalStyle);
   const userLogged = useContext(AuthContext).username;
   const userRole = useContext(AuthContext).role;
-  console.log(userRole);
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
@@ -113,7 +113,7 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
       <p>Confirmed: {confirmed ? 'Yes' : 'No'}</p>
-      {userLogged === username && <span style={{ fontSize: '11px' }}>You own this event<br /></span>}
+      {userLogged === username && <span style={{ fontSize: '11px', display: 'block' }}>You own this event</span>}
       {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(true)}>Edit</Button>}
     </div >
   );
@@ -123,7 +123,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
       <TextField onChange={e => setTitleEdit(e.target.value)} defaultValue={titleEdit} label="Title" />
       <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
         <KeyboardDatePicker
-
           disableToolbar
           variant="inline"
           format="DD-MM-yyyy"
@@ -137,7 +136,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
           }}
         />
         <KeyboardDatePicker
-
           disableToolbar
           variant="inline"
           format="DD-MM-yyyy"
@@ -151,7 +149,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
           }}
         />
       </MuiPickersUtilsProvider>
-
       <TextField defaultValue={descriptionEdit} label="Description" onChange={e => setDescriptionedit(e.target.value)} />
       <InputLabel id="confirm-status">Confirm Status</InputLabel>
       <Select
@@ -162,12 +159,10 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
         <MenuItem value={1}>Yes</MenuItem>
         <MenuItem value={0}>No</MenuItem>
       </Select>
-      <br />
-      <br />
-      <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', marginTop: '5px' }}>
+      <div style={{ fontSize: '12px', marginTop: '5px' }}>
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
-      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+      <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} variant="contained" disableElevation aria-label="outlined primary button group">
         {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>Cancel</Button>}
         {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => initUpdate()}>Save</Button>}
         {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={() => onDelete(id)}>Delete</Button>}

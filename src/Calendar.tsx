@@ -8,7 +8,8 @@ import CalendarDetail from './components/CalendarDetail';
 import { CalendarProps, TOnSelectItem, dataObj } from './types/EventTypes';
 import { AuthContext } from './App';
 import { useIntl } from 'react-intl';
-import { IntlProvider, FormattedMessage } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
+import WarningIcon from '@material-ui/icons/Warning';
 
 import { bodyEditType } from './components/CalendarDetail';
 
@@ -86,7 +87,6 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   }
 
   const onUpdateEvent = async (id: number, body: bodyEditType, close: any) => {
-    console.log('deleting')
     const token = localStorage.getItem('id')
     const req = await fetch(`${UPDATE_EVENT}${id}?access_token=${token}`, {
       method: 'PATCH',
@@ -115,6 +115,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     setData(procesingRes);
     setLoaded(true);
   }
+  
   useEffect(() => {
     fetchData();
     const refreshTime = setInterval(() => {
@@ -135,7 +136,6 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
 
 
   const handleEventClick = (range: TOnSelectItem) => {
-    console.log(range)
     setDetailEvent({
       id: range.id,
       title: range.title,
@@ -193,12 +193,10 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
           selectable={true}
           style={{ height: 500 }
           }
-        /> : 'Not loaded'}
+        /> : <><WarningIcon style={{ color: 'orange', verticalAlign: "middle", marginRight: 3 }} /><span style={{ verticalAlign: 'middle' }}>API Offline!</span></>}
       <NewDetail onNewEvent={insertNewEvent} OpenDetailClose={OpenNewClose} startDate={newDetail.start} endDate={newDetail.end} open={openNew} />
       <CalendarDetail onUpdate={(id, body, close) => onUpdateEvent(id, body, close)} confirmed={detailEvent.confirmed} onDelete={onDeleteEvent} id={detailEvent.id} username={detailEvent.username} OpenDetailClose={OpenDetailClose} title={detailEvent.title} start={detailEvent.start} end={
         detailEvent.end} description={detailEvent.description} open={openDetail} />
-      <br />
-      <br />
     </div >
   );
 };

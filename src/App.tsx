@@ -1,12 +1,13 @@
 import React, { useState, useEffect, } from 'react';
-import * as ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect, Switch, MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, MenuItem, IconButton, Breadcrumbs, Menu, Container } from '@material-ui/core';
-import { Link as LinkUi, AccountCircle, Menu as MenuIcon, Home as HomeIcon } from '@material-ui/icons';
+import { AppBar, Toolbar, Typography, MenuItem, IconButton, Menu, Container } from '@material-ui/core';
+import { AccountCircle, Menu as MenuIcon } from '@material-ui/icons';
 import CalendarUi from './Calendar';
 import Navigation from './components/Navigation'
+import Breadcrump from './components/Breadcrump';
 import Signup from './pages/Signup';
+import EventsPage from './EventsPage';
 import { toast } from 'react-toastify';
 import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';
@@ -28,7 +29,6 @@ function loadMessages(locale: any): any {
   }
 }
 
-
 export const AuthContext = React.createContext({ username: null, role: null });
 
 function App() {
@@ -37,14 +37,13 @@ function App() {
   const [role, setRole] = useState(null);
   const [userId, setUserId] = useState(null);
   const [openMenu, setOpenMenu] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [messages, setMessages] = useState<any>(loadMessages(locale));
 
+  const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const [messages, setMessages] = useState<any>(loadMessages(locale));
   useEffect(() => loadMessages(locale).then((data: any) => setMessages(data)), [locale]);
 
-  const open = Boolean(anchorEl);
-
-  const handleMenu = (event: any) => {
+  const handleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -59,15 +58,13 @@ function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     }
     const req = await fetch(LOGOUT_REQ + token, body);
-    const resp = await req.json();
     window.localStorage.clear()
     setUsername(null);
     setRole(null);
-    toast.success('user logout successfully');
+    req.status === 200 && toast.success('User logout successfully');
   };
 
   useEffect(() => {
@@ -79,12 +76,11 @@ function App() {
     const token = localStorage.getItem('id');
     const req = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
     const res = await req.json();
-    console.log(res);
     setUserId(res.id);
     setUsername(res.username);
   }
 
-  const handleChangeLanguage = (e: React.ChangeEvent<any>) => {
+  const handleChangeLanguage = (e: any) => {
     // We are unable to get innerHTML from selected
     const valAndTxt = e.target.value.split('-');
     moment.locale(valAndTxt[0]);
@@ -98,7 +94,7 @@ function App() {
         values={
           {
             lang: valAndTxt[1],
-          } // Values should be an object literal, but not necessarily every value inside
+          }
         }
       />
     )
@@ -144,7 +140,6 @@ function App() {
   }
 
   return (
-
     <div className={openMenu ? 'isMenuOpened App' : 'App'}>
       <AuthContext.Provider value={{ username, role }}>
         <ThemeProvider theme={theme}>
@@ -153,66 +148,56 @@ function App() {
             defaultLocale="en"
             messages={messages}
           >
-            <Router>
-              <div className="page">
-                <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
-                <div className="page-container">
-                  <AppBar position="static">
-                    <Toolbar>
-                      <div className="nav-container">
-                        <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
-                          <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h4">
-                          <FormattedMessage
-                            id="appTitle"
-                            defaultMessage="Appointments"
-                          />
-                        </Typography>
-                        <div >
-                          {username ? renderLoggedInNav() :
+            <MemoryRouter initialEntries={['']} initialIndex={0}>
+              <Router>
+                <div className="page">
+                  <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
+                  <div className="page-container">
+                    <AppBar position="static">
+                      <Toolbar>
+                        <div className="nav-container">
+                          <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
+                            <MenuIcon />
+                          </IconButton>
+                          <Typography variant="h4">
                             <FormattedMessage
-                              id="guest"
-                              defaultMessage="Guest"
-                            />}
+                              id="appTitle"
+                              defaultMessage="Appointments"
+                            />
+                          </Typography>
+                          <div >
+                            {username ? renderLoggedInNav() :
+                              <FormattedMessage
+                                id="guest"
+                                defaultMessage="Guest"
+                              />}
+                          </div>
                         </div>
-                      </div>
-                    </Toolbar>
-                  </AppBar>
-                  <Container fixed  >
-                    <Switch>
-
-                      <Route exact path="/">
-
-                        <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                          <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                          <Typography color="textPrimary">
-                            <FormattedMessage
-                              id="home"
-                              defaultMessage="Home"
-                            /></Typography>
-                        </Breadcrumbs>
-
-                        <CalendarUi username={username} userId={userId} onLocale={locale} />
+                      </Toolbar>
+                    </AppBar>
+                    <Container fixed  >
+                      <Route>
+                        {({ location }) => {
+                          const pathnames = location.pathname.split('/').filter((x) => x);
+                          return <Breadcrump pathnames={pathnames} />
+                        }}
                       </Route>
-
-                      <Route exact path="/signup">
-
-                        <Breadcrumbs style={{ marginTop: '20px', marginBottom: '30px' }}>
-                          <HomeIcon style={{ fontSize: 23 }} color="primary" />
-                          <Typography color="textPrimary">
-                            <FormattedMessage
-                              id="memberArea"
-                              defaultMessage="Member area"
-                            /></Typography>
-                        </Breadcrumbs>
-                        {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
-                      </Route>
-                    </Switch>
-                  </Container>
+                      <Switch>
+                        <Route exact path="/">
+                          <CalendarUi username={username} userId={userId} onLocale={locale} />
+                        </Route>
+                        <Route exact path="/signup">
+                          {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
+                        </Route>
+                        <Route exact path="/events">
+                          <EventsPage />
+                        </Route>
+                      </Switch>
+                    </Container>
+                  </div>
                 </div>
-              </div>
-            </Router>
+              </Router>
+            </MemoryRouter>
           </IntlProvider>
         </ThemeProvider>
       </AuthContext.Provider>

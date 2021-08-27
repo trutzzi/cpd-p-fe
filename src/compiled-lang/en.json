@@ -1,56 +1,88 @@
 {
-    "appTitle": [{
-        "type": 0,
-        "value": "Appointments"
-    }],
-    "guest": [{
-        "type": 0,
-        "value": "Guest"
-    }],
-    "home": [{
-        "type": 0,
-        "value": "Home"
-    }],
-    "homeLink": [{
-        "type": 0,
-        "value": "Home"
-    }],
-    "logout": [{
-        "type": 0,
-        "value": "Logut"
-    }],
-    "memberArea": [{
-        "type": 0,
-        "value": "Member area"
-    }],
-    "myCalendar": [{
-            "type": 1,
-            "value": "username"
-        },
-        {
-            "type": 0,
-            "value": "'s calendar"
-        }
-    ],
-    "myCalendarGuest": [{
-        "type": 0,
-        "value": "Calendar"
-    }],
-    "selectLang": [{
-        "type": 0,
-        "value": "Select language"
-    }],
-    "signupLink": [{
-        "type": 0,
-        "value": "Signup"
-    }],
-    "languageText": [{
-            "type": 0,
-            "value": "Language has been set to "
-        },
-        {
-            "type": 1,
-            "value": "lang"
-        }
-    ]
+  "appTitle": [
+    {
+      "type": 0,
+      "value": "Appointments"
+    }
+  ],
+  "guest": [
+    {
+      "type": 0,
+      "value": "Guest"
+    }
+  ],
+  "home": [
+    {
+      "type": 0,
+      "value": "Home"
+    }
+  ],
+  "homeLink": [
+    {
+      "type": 0,
+      "value": "Home"
+    }
+  ],
+  "languageText": [
+    {
+      "type": 0,
+      "value": "Language has been set to "
+    },
+    {
+      "type": 1,
+      "value": "lang"
+    }
+  ],
+  "logout": [
+    {
+      "type": 0,
+      "value": "Logut"
+    }
+  ],
+  "memberArea": [
+    {
+      "type": 0,
+      "value": "Member area"
+    }
+  ],
+  "myCalendar": [
+    {
+      "type": 1,
+      "value": "username"
+    },
+    {
+      "type": 0,
+      "value": "'s calendar"
+    }
+  ],
+  "myCalendarGuest": [
+    {
+      "type": 0,
+      "value": "Calendar"
+    }
+  ],
+  "selectLang": [
+    {
+      "type": 0,
+      "value": "Select language"
+    }
+  ],
+  "signInTitle": [
+    {
+      "type": 0,
+      "value": "Sign in"
+    }
+  ],
+  "signUpTitle": [
+    {
+      "type": 0,
+      "value": "Sign up"
+    }
+  ],
+  "signupLink": [
+    {
+      "type": 0,
+      "value": "Signup"
+    }
+  ]
 }

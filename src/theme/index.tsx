@@ -15,5 +15,6 @@ const theme = createMuiTheme({
       '"Open Sans"',
     ].join(','),
   },
+  spacing: 10,
 });
 export default theme;

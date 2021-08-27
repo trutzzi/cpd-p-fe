@@ -2,11 +2,11 @@ import { FC, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { FormattedMessage } from 'react-intl'
 import { ToastContainer, toast } from 'react-toastify';
 import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
-import Container from '@material-ui/core/Container';
 import { useIntl } from 'react-intl';
 
 
@@ -14,15 +14,7 @@ type SignupProps = {
   signIn: () => void
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-}));
-
-
 const Signup: FC<SignupProps> = ({ signIn }) => {
-
   const intl = useIntl();
 
   const [login, setLogin] = useState({
@@ -78,7 +70,6 @@ const Signup: FC<SignupProps> = ({ signIn }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify(signUp)
     }
@@ -90,53 +81,49 @@ const Signup: FC<SignupProps> = ({ signIn }) => {
       toast.error(res.error.message);
     }
   }
-  // TODO SIGNUP {
-  //  LOGOUT FUNCTIONALITY
-
-  const classes = useStyles();
 
   return (
     <>
       <ToastContainer />
-      <Container>
-        <Grid container className={classes.root} spacing={2}>
-          <Grid item xs={12}>
-            <Grid container justify="space-between" spacing={2}>
-              <Grid>
-                  {/* TODO: How consum data from intl  */}
-                {/* <h1>{intl.messages.nested.deeply.key}</h1> */}
-                <h1>Sign up</h1>
-                <form noValidate autoComplete="off">
-                  <TextField name="username" onChange={(e) => handleSignUpInput(e)} label="Username" />
-                  <br />
-                  <TextField name="password" onChange={(e) => handleSignUpInput(e)} label="Password" type="password" />
-                  <br />
-                  <TextField name="email" onChange={(e) => handleSignUpInput(e)} label="E-mail" />
-                  <br />
-                  <br />
-                  <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                    <Button onClick={() => onSignUp()} color="primary">Sign Up</Button>
-                  </ButtonGroup>
-                </form>
-              </Grid>
-
-              <Grid>
-                <h1>Sign In</h1>
-                <form noValidate autoComplete="off">
-                  <TextField name="username" onChange={(e) => handleSignInInput(e)} label="Username" />
-                  <br />
-                  <TextField name="password" onChange={(e) => handleSignInInput(e)} label="Password" type="password" />
-                  <br />
-                  <br />
-                  <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                    <Button onClick={() => onSignIn()} color="primary" >Sign In</Button>
-                  </ButtonGroup>
-                </form>
-              </Grid>
-            </Grid>
-          </Grid>
+      <Grid container spacing={10}>
+        <Grid item md={6}>
+          <Typography style={{ marginBottom: 20, marginTop: 10 }} variant="h3" component="h3">
+            <FormattedMessage
+              id="signUpTitle"
+              defaultMessage="Sign up"
+            />
+          </Typography>
+          <form autoComplete="on">
+            <TextField fullWidth required name="username" onChange={(e) => handleSignUpInput(e)} label="Username" />
+            <TextField fullWidth required name="password" onChange={(e) => handleSignUpInput(e)} label="Password" type="password" />
+            <TextField fullWidth required name="email" onChange={(e) => handleSignUpInput(e)} label="E-mail" />
+            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignUp()} color="primary">
+              <FormattedMessage
+                id="signUpTitle"
+                defaultMessage="Sign up"
+              />
+            </Button>
+          </form>
         </Grid>
-      </Container>
+        <Grid item md={6}>
+          <Typography style={{ marginBottom: 20, marginTop: 10 }} variant="h3" component="h3">
+            <FormattedMessage
+              id="signInTitle"
+              defaultMessage="Sign in"
+            />
+          </Typography>
+          <form autoComplete="on">
+            <TextField fullWidth required name="username" onChange={(e) => handleSignInInput(e)} label="Username" />
+            <TextField required name="password" onChange={(e) => handleSignInInput(e)} label="Password" type="password" />
+            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignIn()} color="primary" >
+              <FormattedMessage
+                id="signInTitle"
+                defaultMessage="Sign in"
+              />
+            </Button>
+          </form>
+        </Grid>
+      </Grid >
     </>
   )
 }

@@ -12,7 +12,7 @@ import MomentUtils from '@date-io/moment';
 import moment from "moment";
 import { dataObj } from '../types/EventTypes'
 
-type NewDetailT = {
+type NewDetailType = {
   open: boolean,
   startDate: string | Date,
   endDate: string | Date,
@@ -46,9 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewDetail: FC<NewDetailT> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
-
-
+const NewDetail: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
@@ -78,11 +76,9 @@ const NewDetail: FC<NewDetailT> = ({ open, OpenDetailClose, onNewEvent, startDat
     <div style={modalStyle} className={classes.paper}>
       <form noValidate autoComplete="off">
         <TextField style={{ width: '100%' }} onChange={(e) => setData({ ...data, title: e.target.value })} label="Title" />
-        <br />
         <TextField style={{ width: '100%' }} onChange={(e) => setData({ ...data, description: e.target.value })} label="Description" />
         <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
           <KeyboardDatePicker
-
             disableToolbar
             variant="inline"
             format="DD-MM-yyyy"
@@ -96,7 +92,6 @@ const NewDetail: FC<NewDetailT> = ({ open, OpenDetailClose, onNewEvent, startDat
             }}
           />
           <KeyboardDatePicker
-
             disableToolbar
             variant="inline"
             format="DD-MM-yyyy"
@@ -109,8 +104,7 @@ const NewDetail: FC<NewDetailT> = ({ open, OpenDetailClose, onNewEvent, startDat
               'aria-label': 'change date',
             }}
           />
-          <br />
-          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+          <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} disableElevation variant="contained" aria-label="outlined primary button group">
             <Button onClick={() => onNewEvent(data)} color="secondary">Create</Button>
             <Button onClick={() => OpenDetailClose()} color="primary" >Cancel</Button>
           </ButtonGroup>

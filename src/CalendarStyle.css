@@ -21,6 +21,10 @@ button.rbc-input::-moz-focus-inner {
     padding: 0;
 }
 
+.rbc-show-more {
+    color: #f44336;
+}
+
 .rbc-calendar {
     box-sizing: border-box;
     height: 100%;

@@ -1,8 +1,4 @@
 {
-    "Uhr2IQ": {
-        "defaultMessage": "Delogare",
-        "description": "Delogare"
-    },
     "appTitle": {
         "defaultMessage": "Programari"
     },
@@ -12,7 +8,23 @@
     "home": {
         "defaultMessage": "Acasa"
     },
+    "homeLink": {
+        "defaultMessage": "Acasa",
+        "description": "Home link"
+    },
+    "logout": {
+        "defaultMessage": "Delogare",
+        "description": "Logout"
+    },
     "memberArea": {
         "defaultMessage": "Zona membrii"
+    },
+    "selectLang": {
+        "defaultMessage": "Selecteaza limba",
+        "description": "Select Language display text"
+    },
+    "signupLink": {
+        "defaultMessage": "Inscriere",
+        "description": "Signup link"
     }
 }
