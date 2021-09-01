@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -7,15 +6,13 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from 'react-intl'
 import { ToastContainer, toast } from 'react-toastify';
 import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
-import { useIntl } from 'react-intl';
 
 
 type SignupProps = {
-  signIn: () => void
+  signIn: any
 }
 
 const Signup: FC<SignupProps> = ({ signIn }) => {
-  const intl = useIntl();
 
   const [login, setLogin] = useState({
     username: null,
@@ -78,7 +75,7 @@ const Signup: FC<SignupProps> = ({ signIn }) => {
     if (req.status === 200) {
       toast.success('Username was created')
     } else {
-      toast.error(res.error.message);
+      toast.error(res.error?.message);
     }
   }
 

@@ -42,8 +42,8 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   const [newDetail, setNewDetail] = useState({ start: new Date(), end: new Date() });
   const [detailEvent, setDetailEvent] = React.useState(DEFAULT_DATA);
   const [openDetail, setOpenDetail] = React.useState(false);
-  const username = useContext(AuthContext).username;
-  const intl = useIntl()
+  const getAuthContext = useContext(AuthContext);
+  const username = getAuthContext.username;
 
   const insertNewEvent = async (event: dataObj) => {
     username && (event = { ...event, userId: userId });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch, MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, MenuItem, IconButton, Menu, Container } from '@material-ui/core';
@@ -17,6 +17,7 @@ import { IntlProvider, FormattedMessage } from 'react-intl'
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
+import { useCallback } from 'react';
 
 function loadMessages(locale: any): any {
   switch (locale) {
@@ -30,6 +31,15 @@ function loadMessages(locale: any): any {
 }
 
 export const AuthContext = React.createContext({ username: null, role: null });
+type checkLogInType = {
+  id: number,
+  username: string
+}
+export const fetchLogIn: (id: string, token: string) => Promise<checkLogInType> = async (id, token) => {
+  const req = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
+  const res: Promise<checkLogInType> = await req.json();
+  return res;
+}
 
 function App() {
   const [locale, setLocale] = useState('en');
@@ -51,34 +61,42 @@ function App() {
     setAnchorEl(null);
   };
 
-  const onLogOut = async () => {
-    console.log("Do logout");
-    const token = localStorage.getItem('id');
-    const body = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+  const onLogOut = async function () {
+    try {
+      const token = localStorage.getItem('id');
+      const body = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }
+      const req = await fetch(LOGOUT_REQ + token, body);
+      window.localStorage.clear()
+      setUsername(null);
+      setRole(null);
+      req.status === 200 && toast.success('User logout successfully');
+      console.log("Goodbye!");
+    } catch (e) {
+      console.log('Error')
     }
-    const req = await fetch(LOGOUT_REQ + token, body);
-    window.localStorage.clear()
-    setUsername(null);
-    setRole(null);
-    req.status === 200 && toast.success('User logout successfully');
   };
 
   useEffect(() => {
     checkLogIn();
   }, [username]);
 
-  const checkLogIn = async () => {
+  const checkLogIn = useCallback(async function () {
     const id = localStorage.getItem('user_id');
     const token = localStorage.getItem('id');
-    const req = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
-    const res = await req.json();
-    setUserId(res.id);
-    setUsername(res.username);
-  }
+    if (id && token) {
+      const res = await fetchLogIn(id, token);
+      setUserId(res.id as any);
+      setUsername(res.username as any);
+    } else {
+      setUserId(null);
+      setUsername(null);
+    }
+  }, [username]);
 
   const handleChangeLanguage = (e: any) => {
     // We are unable to get innerHTML from selected
@@ -165,7 +183,7 @@ function App() {
                               defaultMessage="Appointments"
                             />
                           </Typography>
-                          <div >
+                          <div role="button" aria-describedby="Logout button" >
                             {username ? renderLoggedInNav() :
                               <FormattedMessage
                                 id="guest"
@@ -205,5 +223,4 @@ function App() {
     </div >
   );
 }
-
 export default App;

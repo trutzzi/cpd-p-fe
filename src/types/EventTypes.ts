@@ -3,13 +3,13 @@ export type dataObj = {
   description: string,
   start: string | Date,
   end: string | Date,
-  userId?: number | null | undefined
+  userId?: string | null | undefined
 }
 
 export type CalendarProps = {
   onLocale: string,
-  userId: number | null | undefined,
-  username: number | null
+  userId: string | null | undefined,
+  username: string | null
 };
 
 export type TOnSelectItem = {

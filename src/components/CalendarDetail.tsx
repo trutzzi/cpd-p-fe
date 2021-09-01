@@ -91,7 +91,6 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
       end: endEdit,
       confirmed: confirmEdit
     };
-    console.log(body)
     onUpdate(id, body, setEditMode);
   }
 
