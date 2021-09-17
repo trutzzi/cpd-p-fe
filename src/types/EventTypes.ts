@@ -1,3 +1,5 @@
+export type stringOrDate = string | Date;
+
 export type dataObj = {
   title: string,
   description: string,
@@ -8,19 +10,29 @@ export type dataObj = {
 
 export type CalendarProps = {
   onLocale: string,
-  userId: string | null | undefined,
+  userId: number | null | undefined,
   username: string | null
 };
 
-export type TOnSelectItem = {
+export type SelectEventType = {
   title: string,
   description: string,
   id: number,
+  action?: 'select',
   start: Date,
   end: Date,
-  users: any,
-  confirmed: boolean
+  users?: any,
+  confirmed: Boolean,
+  username?: string | undefined,
 }
+
+export type SlotInfo = {
+  start: stringOrDate;
+  end: stringOrDate;
+  slots: Date[] | string[];
+  action: 'select' | 'click' | 'doubleClick';
+}
+
 
 export type TNewDetail = {
   start: Date,

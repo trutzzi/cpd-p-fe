@@ -5,7 +5,6 @@ import FormLabel from '@material-ui/core/FormLabel';
 import languages from '../languages'
 import MenuItem from '@material-ui/core/MenuItem';
 import { FormattedMessage } from 'react-intl'
-import { useIntl } from 'react-intl';
 
 
 interface NavigationProps {

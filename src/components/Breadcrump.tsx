@@ -27,13 +27,13 @@ const Breadcrump: FC<BreadcrumpProps> = ({ pathnames }) => {
       defaultMessage: "Home"
     },
   );
-  const signupTranslate = intl.formatMessage(
+  const signupTranslateText = intl.formatMessage(
     {
       id: "memberArea",
       defaultMessage: "Member area"
     }
   );
-  const eventsTranslate = intl.formatMessage(
+  const eventsTranslateText = intl.formatMessage(
     {
       id: "Events",
       defaultMessage: "Events"
@@ -41,8 +41,8 @@ const Breadcrump: FC<BreadcrumpProps> = ({ pathnames }) => {
   );
   const breadcrumbNameMap: { [key: string]: string } = {
     '/': homeTranslate,
-    '/signup': signupTranslate,
-    '/events': eventsTranslate
+    '/signup': signupTranslateText,
+    '/events': eventsTranslateText
   };
 
   return (

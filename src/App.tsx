@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Redirect, Switch, MemoryRouter } from "
 import { ThemeProvider } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, MenuItem, IconButton, Menu, Container } from '@material-ui/core';
 import { AccountCircle, Menu as MenuIcon } from '@material-ui/icons';
-import CalendarUi from './Calendar';
+import Calendar from './components/calendar';
 import Navigation from './components/Navigation'
 import Breadcrump from './components/Breadcrump';
 import Signup from './pages/Signup';
@@ -17,9 +17,14 @@ import { IntlProvider, FormattedMessage } from 'react-intl'
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
-import { useCallback } from 'react';
 
-function loadMessages(locale: any): any {
+type AuthContextType = { username: string | null, role: any }
+type checkLogInType = {
+  id: number,
+  username: string
+}
+
+function loadTranslatedMessages(locale: any): any {
   switch (locale) {
     case "en":
       return import("./compiled-lang/en.json");
@@ -30,79 +35,80 @@ function loadMessages(locale: any): any {
   }
 }
 
-export const AuthContext = React.createContext({ username: null, role: null });
-type checkLogInType = {
-  id: number,
-  username: string
-}
-export const fetchLogIn: (id: string, token: string) => Promise<checkLogInType> = async (id, token) => {
-  const req = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
-  const res: Promise<checkLogInType> = await req.json();
-  return res;
+export const AuthContext = React.createContext<AuthContextType>({ username: null, role: null });
+
+export const dologinRequest: (id: string, token: string) => Promise<checkLogInType> = async (id, token) => {
+  const loginRequest = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
+  const loginResponse: Promise<checkLogInType> = await loginRequest.json();
+  return loginResponse;
+
 }
 
 function App() {
   const [locale, setLocale] = useState('en');
-  const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState<string | null>(null);
   const [role, setRole] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState<number | null>(null);
   const [openMenu, setOpenMenu] = useState(false);
+  const [loggedInMenuAnchorEl, setLoggedInMenuAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
+  const open = Boolean(loggedInMenuAnchorEl);
+  const [translatedMessages, setTranslatedMessages] = useState<any>(loadTranslatedMessages(locale));
 
-  const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
-  const open = Boolean(anchorEl);
-  const [messages, setMessages] = useState<any>(loadMessages(locale));
-  useEffect(() => loadMessages(locale).then((data: any) => setMessages(data)), [locale]);
+  useEffect(() => {
+    checkLogIn();
+    console.log('checklogin')
+  }, [username]);
+
+  useEffect(() => loadTranslatedMessages(locale).then((data: any) => setTranslatedMessages(data)), [locale]);
 
   const handleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setAnchorEl(event.currentTarget);
+    setLoggedInMenuAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setLoggedInMenuAnchorEl(null);
   };
 
-  const onLogOut = async function () {
+  const doLogOut = async function () {
+    const token = localStorage.getItem('id');
     try {
-      const token = localStorage.getItem('id');
-      const body = {
+      const LogOutRequest = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
       }
-      const req = await fetch(LOGOUT_REQ + token, body);
+      const req = await fetch(LOGOUT_REQ + token, LogOutRequest);
       window.localStorage.clear()
       setUsername(null);
       setRole(null);
       req.status === 200 && toast.success('User logout successfully');
-      console.log("Goodbye!");
     } catch (e) {
-      console.log('Error')
+      console.log(e)
     }
   };
 
-  useEffect(() => {
-    checkLogIn();
-  }, [username]);
-
-  const checkLogIn = useCallback(async function () {
-    const id = localStorage.getItem('user_id');
+  const checkLogIn = async function () {
     const token = localStorage.getItem('id');
+    const id = localStorage.getItem('user_id');
     if (id && token) {
-      const res = await fetchLogIn(id, token);
-      setUserId(res.id as any);
-      setUsername(res.username as any);
+      const res = await dologinRequest(id, token);
+      setUserId(res.id);
+      setUsername(res.username);
     } else {
       setUserId(null);
       setUsername(null);
     }
-  }, [username]);
+  };
 
-  const handleChangeLanguage = (e: any) => {
-    // We are unable to get innerHTML from selected
-    const valAndTxt = e.target.value.split('-');
-    moment.locale(valAndTxt[0]);
-    setLocale(valAndTxt[0]);
+  const handleChangeLanguage = (e: React.ChangeEvent<{
+    name?: string | undefined;
+    value: unknown;
+  }>) => {
+    const value = e.target.value as string;
+    const extractLang = value.split('-');
+    moment.locale(extractLang[0]);
+    setLocale(extractLang[0]);
     toast.success(
 
       <FormattedMessage
@@ -111,14 +117,14 @@ function App() {
         defaultMessage='Language has been set to {lang}'
         values={
           {
-            lang: valAndTxt[1],
+            lang: extractLang[1],
           }
         }
       />
     )
   }
 
-  const renderLoggedInNav = () => {
+  const renderLoggedInMenu = () => {
     return (
       <>
         <IconButton
@@ -132,7 +138,7 @@ function App() {
         </IconButton>
         <Menu
           id="menu-appbar"
-          anchorEl={anchorEl}
+          anchorEl={loggedInMenuAnchorEl}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'right',
@@ -145,7 +151,7 @@ function App() {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem onClick={onLogOut}>
+          <MenuItem onClick={doLogOut}>
             <FormattedMessage
               id="logout"
               defaultMessage="Logut"
@@ -164,7 +170,7 @@ function App() {
           <IntlProvider
             locale={locale}
             defaultLocale="en"
-            messages={messages}
+            messages={translatedMessages}
           >
             <MemoryRouter initialEntries={['']} initialIndex={0}>
               <Router>
@@ -184,7 +190,7 @@ function App() {
                             />
                           </Typography>
                           <div role="button" aria-describedby="Logout button" >
-                            {username ? renderLoggedInNav() :
+                            {username ? renderLoggedInMenu() :
                               <FormattedMessage
                                 id="guest"
                                 defaultMessage="Guest"
@@ -202,10 +208,10 @@ function App() {
                       </Route>
                       <Switch>
                         <Route exact path="/">
-                          <CalendarUi username={username} userId={userId} onLocale={locale} />
+                          <Calendar username={username} userId={userId} onLocale={locale} />
                         </Route>
                         <Route exact path="/signup">
-                          {username ? <Redirect to="/" /> : <Signup signIn={checkLogIn} />}
+                          {username ? <Redirect to="/" /> : <Signup onSignIn={checkLogIn} />}
                         </Route>
                         <Route exact path="/events">
                           <EventsPage />

@@ -10,7 +10,7 @@ import {
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import moment from "moment";
-import { dataObj } from '../types/EventTypes'
+import { dataObj } from '../../types/EventTypes'
 
 type NewDetailType = {
   open: boolean,
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewDetail: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
+const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
@@ -123,4 +123,4 @@ const NewDetail: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, start
     </Modal>
   );
 }
-export default NewDetail;
+export default NewEvent;

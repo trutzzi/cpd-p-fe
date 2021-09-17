@@ -11,7 +11,7 @@ import MomentUtils from '@date-io/moment';
 import moment from "moment";
 import TextField from '@material-ui/core/TextField';
 import { Button, Modal, ButtonGroup, Select, MenuItem, InputLabel } from '@material-ui/core'
-import { AuthContext } from '../App';
+import { AuthContext } from '../../App';
 import { useEffect } from 'react';
 
 
@@ -45,11 +45,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type bodyEditType = {
+export type UpdateEventType = {
   title: string | undefined;
   description: string | undefined;
-  start: Date | undefined;
-  end: Date | undefined;
+  start?: null | Date;
+  end?: null | Date;
   confirmed: Boolean | number | undefined;
 }
 
@@ -58,21 +58,21 @@ type CalendarDetailProps = {
   description: string,
   id: number,
   open: boolean,
-  username: string,
+  username: string | undefined,
   start: Date,
   end: Date,
   confirmed: Boolean,
   OpenDetailClose: Function,
   onDelete: Function,
-  onUpdate: (id: number, body: bodyEditType, close: React.Dispatch<React.SetStateAction<boolean>>) => void;
+  onUpdate: (id: number, body: UpdateEventType, close: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
-const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confirmed, open, OpenDetailClose, start, end, username, onDelete, onUpdate }) => {
+const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirmed, open, OpenDetailClose, start, end, username, onDelete, onUpdate }) => {
   const [editMode, setEditMode] = useState(false);
   const [titleEdit, setTitleEdit] = useState<string>();
   const [descriptionEdit, setDescriptionedit] = useState<string>();
-  const [startEdit, setStartEdit] = useState(start);
-  const [endEdit, setEndEdit] = useState(end);
+  const [startEdit, setStartEdit] = useState<Date | undefined>(start);
+  const [endEdit, setEndEdit] = useState<Date | undefined>(end);
   const [confirmEdit, setConfirmEdit] = useState<Boolean | number>();
 
   useEffect(() => {
@@ -81,43 +81,41 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
     setEndEdit(end);
     setDescriptionedit(description);
     setConfirmEdit(confirmed ? 1 : 0);
-  }, [title, description, confirmed]);
+  }, [title, description, confirmed, end, start]);
 
-  const initUpdate = () => {
-    const body: bodyEditType = {
+  const updateEvent = () => {
+    const UpdateRequestEvent: UpdateEventType = {
       title: titleEdit,
       description: descriptionEdit,
       start: startEdit,
       end: endEdit,
       confirmed: confirmEdit
     };
-    onUpdate(id, body, setEditMode);
+    onUpdate(id, UpdateRequestEvent, setEditMode);
   }
 
   const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
   const userLogged = useContext(AuthContext).username;
-  const userRole = useContext(AuthContext).role;
-
-  const body = (
+  const isEventMine = userLogged === username;
+  const ModalViewBody = (
     <div style={modalStyle} className={classes.paper}>
       <h2>{title}</h2>
       <p className="modal-time">
       </p>
-      <p id="simple-modal-description">
+      <p className="modal-description"> 
         {description}
       </p>
       <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', marginTop: '5px' }}>
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
       <p>Confirmed: {confirmed ? 'Yes' : 'No'}</p>
-      {userLogged === username && <span style={{ fontSize: '11px', display: 'block' }}>You own this event</span>}
-      {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(true)}>Edit</Button>}
+      {isEventMine && <span style={{ fontSize: '11px', display: 'block' }}>You own this event</span>}
+      {isEventMine && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(true)}>Edit</Button>}
     </div >
   );
 
-  const bodyEdit = (
+  const ModalEditBody = (
     <div style={modalStyle} className={classes.paper}>
       <TextField onChange={e => setTitleEdit(e.target.value)} defaultValue={titleEdit} label="Title" />
       <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
@@ -129,7 +127,7 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
           id="date-picker-inline"
           label="Event start date"
           value={startEdit}
-          onChange={(e: any) => setStartEdit(e._d)}
+          onChange={(date) => setStartEdit(date?.toDate())}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
@@ -142,7 +140,7 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
           id="date-picker-inline2"
           label="Event end date"
           value={endEdit}
-          onChange={(e: any) => setEndEdit(e._d)}
+          onChange={(date) => setEndEdit(date?.toDate())}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
@@ -161,11 +159,12 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
       <div style={{ fontSize: '12px', marginTop: '5px' }}>
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
-      <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} variant="contained" disableElevation aria-label="outlined primary button group">
-        {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>Cancel</Button>}
-        {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => initUpdate()}>Save</Button>}
-        {userLogged === username && <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={() => onDelete(id)}>Delete</Button>}
+      {isEventMine && <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} variant="contained" disableElevation aria-label="outlined primary button group">
+        <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>Cancel</Button>
+        <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => updateEvent()}>Save</Button>
+        <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={() => onDelete(id)}>Delete</Button>
       </ButtonGroup>
+      }
     </div >
   )
 
@@ -173,13 +172,11 @@ const CalendarDetail: FC<CalendarDetailProps> = ({ title, id, description, confi
     <Modal
       open={open}
       onClose={() => OpenDetailClose()}
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
     >
       <>
-        {editMode ? bodyEdit : body}
+        {editMode ? ModalEditBody : ModalViewBody}
       </>
     </Modal>
   );
 }
-export default CalendarDetail;
+export default EventDetails;

@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-// import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { DATA_REQ } from './constants/constants';
 import Moment from 'moment';
@@ -113,7 +112,6 @@ export default function StickyHeadTable() {
 
   useEffect(() => {
     fetchData();
-    console.log(data);
     data.map((e: EventRequestType) => createData(e.id, e.title, e.start, e.end, e.description, e.userId, e.users.username))
   }, [])
 
@@ -146,7 +144,6 @@ export default function StickyHeadTable() {
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.title}>
                   {columns.map((column) => {
                     const value = row[column.id];
-                    console.log(value)
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {column.format && typeof value === 'string' ? column.format(value) : value}

@@ -9,10 +9,10 @@ import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
 
 
 type SignupProps = {
-  signIn: any
+  onSignIn: any;
 }
 
-const Signup: FC<SignupProps> = ({ signIn }) => {
+const Signup: FC<SignupProps> = ({ onSignIn: signIn }) => {
 
   const [login, setLogin] = useState({
     username: null,

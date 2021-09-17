@@ -1,23 +1,23 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import React, { useState, FC, useEffect, useContext } from 'react';
-import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from './constants/constants';
+import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from '../../constants/constants';
 import { toast } from 'react-toastify';
-import NewDetail from './components/NewDetail';
-import CalendarDetail from './components/CalendarDetail';
-import { CalendarProps, TOnSelectItem, dataObj } from './types/EventTypes';
-import { AuthContext } from './App';
-import { useIntl } from 'react-intl';
+import NewEvent from './NewEvent';
+import EventDetails from './CalendarDetail';
+import { CalendarProps as CalendarComponentProps, SelectEventType as SelectEventType, dataObj, SlotInfo } from '../../types/EventTypes';
+import { AuthContext } from '../../App';
 import { FormattedMessage } from 'react-intl'
 import WarningIcon from '@material-ui/icons/Warning';
 
-import { bodyEditType } from './components/CalendarDetail';
+import { UpdateEventType } from './CalendarDetail';
 
 
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { useMemo } from 'react';
 
-type itemRequest = {
+type ItemRequestType = {
   description: string,
   end: Date | string,
   id: number,
@@ -29,48 +29,47 @@ type itemRequest = {
   emailVerified: boolean | null
 }
 
-const DEFAULT_DATA = {
-  id: 1, title: '', confirmed: false, description: '', username: '', start: new Date(), end: new Date()
-}
+type StartEndEventType = { start: string | Date, end: string | Date }
 
 const localizer = momentLocalizer(moment);
 
-const CalendarUi: FC<CalendarProps> = ({ userId }) => {
+const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState([]);
   const [openNew, setOpenNew] = useState(false);
-  const [newDetail, setNewDetail] = useState({ start: new Date(), end: new Date() });
-  const [detailEvent, setDetailEvent] = React.useState(DEFAULT_DATA);
-  const [openDetail, setOpenDetail] = React.useState(false);
+  const [newDetail, setNewDetail] = useState<StartEndEventType>({ start: new Date(), end: new Date() });
+  const [eventDetail, setEventDetail] = useState<SelectEventType>();
+  const [openDetail, setOpenDetail] = useState(false);
   const getAuthContext = useContext(AuthContext);
   const username = getAuthContext.username;
+  const token = useMemo(() => localStorage.getItem('id'), [username]);
 
-  const insertNewEvent = async (event: dataObj) => {
-    username && (event = { ...event, userId: userId });
-
-    const token = localStorage.getItem('id')
-    const req = await fetch(NEW_REQ + token, {
+  const createNewEvent = async (event: dataObj) => {
+    const newEvent = { ...event, userId: userId };
+    const insertEventRequest = await fetch(NEW_REQ + token, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(event),
+      body: JSON.stringify(newEvent),
     });
-
-    if (req.status === 200) {
+    const isOk = insertEventRequest.status === 200;
+    if (isOk) {
       setOpenNew(false);
-      fetchData();
+      loadCalendarEvents();
       toast.info(`Event ${event.title} was created`);
     } else {
-      const err = await req.json();
+      const err = await insertEventRequest.json();
       const errMsg = err.error.message;
-      toast.error(errMsg);
+      showError(errMsg);
     }
   }
 
-  const onDeleteEvent = async (id: number) => {
-    console.log('deleting')
-    const token = localStorage.getItem('id')
+  const showError = (msg: string) => {
+    toast.error(msg);
+  }
+
+  const deleteEvent = async (id: number) => {
     const req = await fetch(`${DELETE_EVENT}${id}?access_token=${token}`, {
       method: 'DELETE',
       headers: {
@@ -80,49 +79,48 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     if (req.status === 200) {
       toast.info('Event ' + id + ' has been deleted')
       OpenDetailClose();
-      fetchData();
+      loadCalendarEvents();
     } else if (req.status === 401) {
       toast.error('This event is not yours');
     }
   }
 
-  const onUpdateEvent = async (id: number, body: bodyEditType, close: any) => {
-    const token = localStorage.getItem('id')
-    const req = await fetch(`${UPDATE_EVENT}${id}?access_token=${token}`, {
+  const updateEvent = async (id: number, event: UpdateEventType, close: React.Dispatch<React.SetStateAction<boolean>>) => {
+    const updateRequest = await fetch(`${UPDATE_EVENT}${id}?access_token=${token}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(event),
     });
-    if (req.status === 200) {
+    if (updateRequest.status === 200) {
       toast.info('Event ' + id + ' has been updated')
-      close();
+      close(true);
       OpenDetailClose();
-      fetchData();
-    } else if (req.status === 401) {
+      loadCalendarEvents();
+    } else if (updateRequest.status === 401) {
       toast.error('This event is not yours');
     }
   }
 
-  const fetchData = async () => {
-    const req = await fetch(DATA_REQ);
-    const res = await req.json();
-    const procesingRes = res.map((item: itemRequest) => {
-      item = { ...item, start: new Date(item.start), end: new Date(item.end), users: item.users }
-      return item;
+  const loadCalendarEvents = async () => {
+    const CalendarEventsRequest = await fetch(DATA_REQ);
+    const res = await CalendarEventsRequest.json();
+    const procesingRes = res.map((event: ItemRequestType) => {
+      event = { ...event, start: new Date(event.start), end: new Date(event.end), users: event.users }
+      return event;
     })
     setData(procesingRes);
     setLoaded(true);
   }
 
   useEffect(() => {
-    fetchData();
-    const refreshTime = setInterval(() => {
-      fetchData();
+    loadCalendarEvents();
+    const refreshTimer = setInterval(() => {
+      loadCalendarEvents();
     }, 30000)
     return () => {
-      clearInterval(refreshTime);
+      clearInterval(refreshTimer);
     }
   }, []);
 
@@ -135,8 +133,8 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
   };
 
 
-  const handleEventClick = (range: TOnSelectItem) => {
-    setDetailEvent({
+  const handleEventSimple = (range: SelectEventType) => {
+    setEventDetail({
       id: range.id,
       title: range.title,
       start: range.start,
@@ -148,7 +146,7 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
     setOpenDetail(true);
     return true;
   };
-  const handleEventClick2 = (e: any) => {
+  const handleEventSlot = (e: SlotInfo) => {
     const { start, end, action } = e;
     if (username) {
       if (action === "select") {
@@ -186,17 +184,18 @@ const CalendarUi: FC<CalendarProps> = ({ userId }) => {
           localizer={localizer}
           events={data}
           startAccessor="start"
-          onSelectSlot={handleEventClick2}
-          onSelectEvent={handleEventClick}
+          onSelectSlot={handleEventSlot}
+          onSelectEvent={handleEventSimple}
           endAccessor="end"
           selectable={true}
-          style={{ height: 500 }
+          style={{ height: 600 }
           }
         /> : <><WarningIcon style={{ color: 'orange', verticalAlign: "middle", marginRight: 3 }} /><span style={{ verticalAlign: 'middle' }}>API Offline!</span></>}
-      <NewDetail onNewEvent={insertNewEvent} OpenDetailClose={OpenNewClose} startDate={newDetail.start} endDate={newDetail.end} open={openNew} />
-      <CalendarDetail onUpdate={(id, body, close) => onUpdateEvent(id, body, close)} confirmed={detailEvent.confirmed} onDelete={onDeleteEvent} id={detailEvent.id} username={detailEvent.username} OpenDetailClose={OpenDetailClose} title={detailEvent.title} start={detailEvent.start} end={
-        detailEvent.end} description={detailEvent.description} open={openDetail} />
+      <NewEvent onNewEvent={createNewEvent} OpenDetailClose={OpenNewClose} startDate={newDetail.start} endDate={newDetail.end} open={openNew} />
+      {eventDetail && <EventDetails onUpdate={(id, body, close) => updateEvent(id, body, close)} confirmed={eventDetail.confirmed} onDelete={deleteEvent} id={eventDetail.id} username={eventDetail.username} OpenDetailClose={OpenDetailClose} title={eventDetail.title} start={eventDetail.start} end={
+        eventDetail.end} description={eventDetail.description} open={openDetail} />
+      }
     </div >
   );
 };
-export default CalendarUi;
+export default CalendarComponent;
