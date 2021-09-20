@@ -49,17 +49,24 @@ const useStyles = makeStyles((theme) => ({
 const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
-
-  useEffect(() => {
-    setData({ ...data, start: startDate, end: endDate });
-  }, [startDate, endDate])
-
+  const [isCreateDisabled, setIsCreateDisabled] = useState(false);
   const [data, setData] = useState({
     title: '',
     description: '',
     start: startDate,
     end: endDate,
   });
+
+  useEffect(() => {
+    setData({ ...data, start: startDate, end: endDate });
+  }, [startDate, endDate])
+  useEffect(() => {
+    const isModified = data.title == '' || data.description == ''
+    setIsCreateDisabled(isModified)
+  }, [data])
+  useEffect(() => {
+    setIsCreateDisabled(true);
+  }, [open])
 
   const handleDateChangeStart = (e: any) => {
     setData({
@@ -105,7 +112,7 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
             }}
           />
           <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} disableElevation variant="contained" aria-label="outlined primary button group">
-            <Button onClick={() => onNewEvent(data)} color="secondary">Create</Button>
+            <Button onClick={() => onNewEvent(data)} disabled={isCreateDisabled} color="secondary">Create</Button>
             <Button onClick={() => OpenDetailClose()} color="primary" >Cancel</Button>
           </ButtonGroup>
         </MuiPickersUtilsProvider>

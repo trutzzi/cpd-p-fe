@@ -1,7 +1,23 @@
 {
+    "Events": [{
+        "type": 0,
+        "value": "Evenimente"
+    }],
     "appTitle": [{
         "type": 0,
         "value": "Programari"
+    }],
+    "description": [{
+        "type": 0,
+        "value": "Descriere"
+    }],
+    "evenstLink": [{
+        "type": 0,
+        "value": "Evenimente"
+    }],
+    "from": [{
+        "type": 0,
+        "value": "De la"
     }],
     "guest": [{
         "type": 0,
@@ -15,9 +31,18 @@
         "type": 0,
         "value": "Acasa"
     }],
+    "languageText": [{
+            "type": 0,
+            "value": "Limba a fost setata in "
+        },
+        {
+            "type": 1,
+            "value": "lang"
+        }
+    ],
     "logout": [{
         "type": 0,
-        "value": "Delogare"
+        "value": "Logut"
     }],
     "memberArea": [{
         "type": 0,
@@ -29,7 +54,7 @@
         },
         {
             "type": 0,
-            "value": "Calendar"
+            "value": "'s calendar"
         }
     ],
     "myCalendarGuest": [{
@@ -40,25 +65,65 @@
         "type": 0,
         "value": "Selecteaza limba"
     }],
+    "signInTitle": [{
+        "type": 0,
+        "value": "Autentificare"
+    }],
+    "signUpTitle": [{
+        "type": 0,
+        "value": "Inscriere"
+    }],
     "signupLink": [{
         "type": 0,
-        "value": "Inregistrare"
+        "value": "Creaza"
     }],
-    "languageText": [{
-            "type": 0,
-            "value": "Limba a fost selectata cu "
-        },
-        {
-            "type": 1,
-            "value": "lang"
-        }
-    ],
-    "Events": [{
+    "title": [{
         "type": 0,
         "value": "Evenimente"
     }],
-    "evenstLink": [{
+    "to": [{
         "type": 0,
-        "value": "Evenimente"
+        "value": "Pana la"
+    }],
+    "userId": [{
+        "type": 0,
+        "value": "Id utilizator"
+    }],
+    "username": [{
+        "type": 0,
+        "value": "Utilizator"
+    }],
+    "titleComponent": [{
+        "type": 0,
+        "value": "Titlu"
+    }],
+    "save": [{
+        "type": 0,
+        "value": "Salveaza"
+    }],
+    "cancel": [{
+        "type": 0,
+        "value": "Renunta"
+    }],
+    "delete": [{
+        "type": 0,
+        "value": "Stergere"
+    }],
+    "edit": [{
+        "type": 0,
+        "value": "Editeaza"
+    }],
+    "agree": [{
+        "type": 0,
+        "value": "De accord"
+    }],
+    "deleteConfirmTitle": [{
+        "type": 0,
+        "value": "Confirmare stergere"
+    }],
+    "deleteConfirmMessage": [{
+        "type": 0,
+        "value": "Sunteti sigur ca vreti sa stergeti acest eveniment definitiv?"
     }]
+
 }

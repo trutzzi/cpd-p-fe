@@ -1,21 +1,17 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import React, { useState, FC, useEffect, useContext } from 'react';
-import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from '../../constants/constants';
+import { FormattedMessage } from 'react-intl'
+import React, { useState, FC, useEffect, useContext, useMemo } from 'react';
 import { toast } from 'react-toastify';
+import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from '../../constants/constants';
 import NewEvent from './NewEvent';
 import EventDetails from './CalendarDetail';
 import { CalendarProps as CalendarComponentProps, SelectEventType as SelectEventType, dataObj, SlotInfo } from '../../types/EventTypes';
 import { AuthContext } from '../../App';
-import { FormattedMessage } from 'react-intl'
-import WarningIcon from '@material-ui/icons/Warning';
-
 import { UpdateEventType } from './CalendarDetail';
-
-
+import WarningIcon from '@material-ui/icons/Warning';
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { useMemo } from 'react';
 
 type ItemRequestType = {
   description: string,
@@ -35,11 +31,12 @@ const localizer = momentLocalizer(moment);
 
 const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   const [loaded, setLoaded] = useState(false);
-  const [data, setData] = useState([]);
-  const [openNew, setOpenNew] = useState(false);
-  const [newDetail, setNewDetail] = useState<StartEndEventType>({ start: new Date(), end: new Date() });
-  const [eventDetail, setEventDetail] = useState<SelectEventType>();
+  const [eventsData, setEventsData] = useState([]);
+  const [openNewModal, setOpenNewModal] = useState(false);
+  const [newEventSlot, setNewEventSlot] = useState<StartEndEventType>({ start: new Date(), end: new Date() });
+  const [eventModalDetail, setEventModalDetail] = useState<SelectEventType>();
   const [openDetail, setOpenDetail] = useState(false);
+
   const getAuthContext = useContext(AuthContext);
   const username = getAuthContext.username;
   const token = useMemo(() => localStorage.getItem('id'), [username]);
@@ -55,18 +52,14 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
     });
     const isOk = insertEventRequest.status === 200;
     if (isOk) {
-      setOpenNew(false);
+      setOpenNewModal(false);
       loadCalendarEvents();
       toast.info(`Event ${event.title} was created`);
     } else {
       const err = await insertEventRequest.json();
       const errMsg = err.error.message;
-      showError(errMsg);
+      toast.error(errMsg);
     }
-  }
-
-  const showError = (msg: string) => {
-    toast.error(msg);
   }
 
   const deleteEvent = async (id: number) => {
@@ -110,7 +103,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
       event = { ...event, start: new Date(event.start), end: new Date(event.end), users: event.users }
       return event;
     })
-    setData(procesingRes);
+    setEventsData(procesingRes);
     setLoaded(true);
   }
 
@@ -129,12 +122,12 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   };
 
   const OpenNewClose = () => {
-    setOpenNew(false);
+    setOpenNewModal(false);
   };
 
 
   const handleEventSimple = (range: SelectEventType) => {
-    setEventDetail({
+    setEventModalDetail({
       id: range.id,
       title: range.title,
       start: range.start,
@@ -150,10 +143,10 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
     const { start, end, action } = e;
     if (username) {
       if (action === "select") {
-        setNewDetail({
-          ...newDetail, start: start, end: end
+        setNewEventSlot({
+          ...newEventSlot, start: start, end: end
         });
-        setOpenNew(true);
+        setOpenNewModal(true);
       }
     } else {
       toast.error('You must be logged in to create event')
@@ -182,7 +175,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
       {
         loaded ? <Calendar
           localizer={localizer}
-          events={data}
+          events={eventsData}
           startAccessor="start"
           onSelectSlot={handleEventSlot}
           onSelectEvent={handleEventSimple}
@@ -191,9 +184,9 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
           style={{ height: 600 }
           }
         /> : <><WarningIcon style={{ color: 'orange', verticalAlign: "middle", marginRight: 3 }} /><span style={{ verticalAlign: 'middle' }}>API Offline!</span></>}
-      <NewEvent onNewEvent={createNewEvent} OpenDetailClose={OpenNewClose} startDate={newDetail.start} endDate={newDetail.end} open={openNew} />
-      {eventDetail && <EventDetails onUpdate={(id, body, close) => updateEvent(id, body, close)} confirmed={eventDetail.confirmed} onDelete={deleteEvent} id={eventDetail.id} username={eventDetail.username} OpenDetailClose={OpenDetailClose} title={eventDetail.title} start={eventDetail.start} end={
-        eventDetail.end} description={eventDetail.description} open={openDetail} />
+      <NewEvent onNewEvent={createNewEvent} OpenDetailClose={OpenNewClose} startDate={newEventSlot.start} endDate={newEventSlot.end} open={openNewModal} />
+      {eventModalDetail && <EventDetails onUpdate={(id, body, close) => updateEvent(id, body, close)} confirmed={eventModalDetail.confirmed} onDelete={deleteEvent} id={eventModalDetail.id} username={eventModalDetail.username} OpenDetailClose={OpenDetailClose} title={eventModalDetail.title} start={eventModalDetail.start} end={
+        eventModalDetail.end} description={eventModalDetail.description} open={openDetail} />
       }
     </div >
   );

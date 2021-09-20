@@ -1,19 +1,39 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Moment from 'moment';
-import PersonIcon from '@material-ui/icons/Person';
-import DateRangeIcon from '@material-ui/icons/DateRange';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import moment from "moment";
-import TextField from '@material-ui/core/TextField';
-import { Button, Modal, ButtonGroup, Select, MenuItem, InputLabel } from '@material-ui/core'
+import { Button, Modal, ButtonGroup, Select, MenuItem, InputLabel, TextField } from '@material-ui/core'
+import { DateRange as DateRangeIcon, Person as PersonIcon } from '@material-ui/icons';
 import { AuthContext } from '../../App';
-import { useEffect } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import ConfirmBox from '../ConfirmBox';
 
+export type UpdateEventType = {
+  title: string | undefined;
+  description: string | undefined;
+  start?: null | Date;
+  end?: null | Date;
+  confirmed: Boolean | number | undefined;
+}
+
+type CalendarDetailProps = {
+  title: string,
+  description: string,
+  id: number,
+  open: boolean,
+  username: string | undefined,
+  start: Date,
+  end: Date,
+  confirmed: Boolean,
+  OpenDetailClose: Function,
+  onDelete: Function,
+  onUpdate: (id: number, body: UpdateEventType, close: React.Dispatch<React.SetStateAction<boolean>>) => void;
+}
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -45,28 +65,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type UpdateEventType = {
-  title: string | undefined;
-  description: string | undefined;
-  start?: null | Date;
-  end?: null | Date;
-  confirmed: Boolean | number | undefined;
-}
-
-type CalendarDetailProps = {
-  title: string,
-  description: string,
-  id: number,
-  open: boolean,
-  username: string | undefined,
-  start: Date,
-  end: Date,
-  confirmed: Boolean,
-  OpenDetailClose: Function,
-  onDelete: Function,
-  onUpdate: (id: number, body: UpdateEventType, close: React.Dispatch<React.SetStateAction<boolean>>) => void;
-}
-
 const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirmed, open, OpenDetailClose, start, end, username, onDelete, onUpdate }) => {
   const [editMode, setEditMode] = useState(false);
   const [titleEdit, setTitleEdit] = useState<string>();
@@ -74,6 +72,10 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
   const [startEdit, setStartEdit] = useState<Date | undefined>(start);
   const [endEdit, setEndEdit] = useState<Date | undefined>(end);
   const [confirmEdit, setConfirmEdit] = useState<Boolean | number>();
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
+
+  const intl = useIntl();
 
   useEffect(() => {
     setTitleEdit(title);
@@ -83,6 +85,17 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
     setConfirmEdit(confirmed ? 1 : 0);
   }, [title, description, confirmed, end, start]);
 
+  useEffect(() => {
+    console.log('startEdit', startEdit, 'endEdit', end)
+    let isFormModified = titleEdit !== title || startEdit !== start || endEdit !== end || descriptionEdit !== description
+    const isFormEmpty = titleEdit === '' || descriptionEdit === ''
+    isFormEmpty && (isFormModified = false)
+    setIsSaveDisabled(!isFormModified)
+  }, [titleEdit, startEdit, endEdit, descriptionEdit])
+
+  const confirmDeleteDialog = () => {
+    setConfirmDelete(true);
+  }
   const updateEvent = () => {
     const UpdateRequestEvent: UpdateEventType = {
       title: titleEdit,
@@ -103,21 +116,36 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
       <h2>{title}</h2>
       <p className="modal-time">
       </p>
-      <p className="modal-description"> 
+      <p className="modal-description">
         {description}
       </p>
       <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', marginTop: '5px' }}>
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
       <p>Confirmed: {confirmed ? 'Yes' : 'No'}</p>
-      {isEventMine && <span style={{ fontSize: '11px', display: 'block' }}>You own this event</span>}
-      {isEventMine && <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(true)}>Edit</Button>}
+      {isEventMine && (
+        <span className="myEvent">
+          <span style={{ fontSize: '11px', display: 'block' }}>You own this event</span>
+          <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(true)}>
+            <FormattedMessage
+              id="edit"
+              defaultMessage="Edit"
+              description="Edit"
+            />
+          </Button>
+        </span>
+      )}
     </div >
   );
 
   const ModalEditBody = (
     <div style={modalStyle} className={classes.paper}>
-      <TextField onChange={e => setTitleEdit(e.target.value)} defaultValue={titleEdit} label="Title" />
+      <TextField onChange={e => setTitleEdit(e.target.value)} defaultValue={titleEdit} label={
+        intl.formatMessage({
+          id: "titleComponent",
+          defaultMessage: "Title"
+        })
+      } />
       <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
         <KeyboardDatePicker
           disableToolbar
@@ -125,7 +153,12 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
           format="DD-MM-yyyy"
           margin="normal"
           id="date-picker-inline"
-          label="Event start date"
+          label={
+            intl.formatMessage({
+              id: "from",
+              defaultMessage: "From"
+            })
+          }
           value={startEdit}
           onChange={(date) => setStartEdit(date?.toDate())}
           KeyboardButtonProps={{
@@ -138,7 +171,12 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
           format="DD-MM-yyyy"
           margin="normal"
           id="date-picker-inline2"
-          label="Event end date"
+          label={
+            intl.formatMessage({
+              id: "to",
+              defaultMessage: "To"
+            })
+          }
           value={endEdit}
           onChange={(date) => setEndEdit(date?.toDate())}
           KeyboardButtonProps={{
@@ -146,7 +184,12 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
           }}
         />
       </MuiPickersUtilsProvider>
-      <TextField defaultValue={descriptionEdit} label="Description" onChange={e => setDescriptionedit(e.target.value)} />
+      <TextField defaultValue={descriptionEdit} label={
+        intl.formatMessage({
+          id: "description",
+          defaultMessage: "Description"
+        })
+      } onChange={e => setDescriptionedit(e.target.value)} />
       <InputLabel id="confirm-status">Confirm Status</InputLabel>
       <Select
         id="confirm-status"
@@ -160,11 +203,36 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
       {isEventMine && <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} variant="contained" disableElevation aria-label="outlined primary button group">
-        <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>Cancel</Button>
-        <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => updateEvent()}>Save</Button>
-        <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={() => onDelete(id)}>Delete</Button>
+        <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>
+          <FormattedMessage
+            id="cancel"
+            defaultMessage="Cancel"
+            description="Cancel"
+          />
+        </Button>
+        <Button style={{ marginTop: '10px' }} disabled={isSaveDisabled} variant="contained" color="primary" onClick={() => updateEvent()}>
+          <FormattedMessage
+            id="save"
+            defaultMessage="Save"
+            description="Save"
+          />
+        </Button>
+        <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={confirmDeleteDialog}>
+          <FormattedMessage
+            id="delete"
+            defaultMessage="Delete"
+            description="Delete"
+          />
+        </Button>
       </ButtonGroup>
       }
+      <ConfirmBox open={confirmDelete} title={intl.formatMessage({
+        id: "deleteConfirmTitle",
+        defaultMessage: "Delete confirmation"
+      })} action={() => onDelete(id)} message={intl.formatMessage({
+        id: "deleteConfirmMessage",
+        defaultMessage: "Are you sure you want to delete permanently this event?"
+      })} closeHandler={setConfirmDelete} />
     </div >
   )
 

@@ -7,7 +7,7 @@ import Calendar from './components/calendar';
 import Navigation from './components/Navigation'
 import Breadcrump from './components/Breadcrump';
 import Signup from './pages/Signup';
-import EventsPage from './EventsPage';
+import EventsPage from './pages/EventsPage';
 import { toast, ToastContainer } from 'react-toastify';
 import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';

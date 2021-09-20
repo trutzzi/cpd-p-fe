@@ -1,100 +1,129 @@
 {
-  "Events": [
-    {
-      "type": 0,
-      "value": "Events"
-    }
-  ],
-  "appTitle": [
-    {
-      "type": 0,
-      "value": "Appointments"
-    }
-  ],
-  "evenstLink": [
-    {
-      "type": 0,
-      "value": "Events"
-    }
-  ],
-  "guest": [
-    {
-      "type": 0,
-      "value": "Guest"
-    }
-  ],
-  "home": [
-    {
-      "type": 0,
-      "value": "Home"
-    }
-  ],
-  "homeLink": [
-    {
-      "type": 0,
-      "value": "Home"
-    }
-  ],
-  "languageText": [
-    {
-      "type": 0,
-      "value": "Language has been set to "
-    },
-    {
-      "type": 1,
-      "value": "lang"
-    }
-  ],
-  "logout": [
-    {
-      "type": 0,
-      "value": "Logut"
-    }
-  ],
-  "memberArea": [
-    {
-      "type": 0,
-      "value": "Member area"
-    }
-  ],
-  "myCalendar": [
-    {
-      "type": 1,
-      "value": "username"
-    },
-    {
-      "type": 0,
-      "value": "'s calendar"
-    }
-  ],
-  "myCalendarGuest": [
-    {
-      "type": 0,
-      "value": "Calendar"
-    }
-  ],
-  "selectLang": [
-    {
-      "type": 0,
-      "value": "Select language"
-    }
-  ],
-  "signInTitle": [
-    {
-      "type": 0,
-      "value": "Sign in"
-    }
-  ],
-  "signUpTitle": [
-    {
-      "type": 0,
-      "value": "Sign up"
-    }
-  ],
-  "signupLink": [
-    {
-      "type": 0,
-      "value": "Signup"
-    }
-  ]
+    "Events": [{
+        "type": 0,
+        "value": "Events"
+    }],
+    "appTitle": [{
+        "type": 0,
+        "value": "Appointments"
+    }],
+    "description": [{
+        "type": 0,
+        "value": "Description"
+    }],
+    "evenstLink": [{
+        "type": 0,
+        "value": "Events"
+    }],
+    "from": [{
+        "type": 0,
+        "value": "From"
+    }],
+    "guest": [{
+        "type": 0,
+        "value": "Guest"
+    }],
+    "home": [{
+        "type": 0,
+        "value": "Home"
+    }],
+    "homeLink": [{
+        "type": 0,
+        "value": "Home"
+    }],
+    "languageText": [{
+            "type": 0,
+            "value": "Language has been set to "
+        },
+        {
+            "type": 1,
+            "value": "lang"
+        }
+    ],
+    "logout": [{
+        "type": 0,
+        "value": "Logut"
+    }],
+    "memberArea": [{
+        "type": 0,
+        "value": "Member area"
+    }],
+    "myCalendar": [{
+            "type": 1,
+            "value": "username"
+        },
+        {
+            "type": 0,
+            "value": "'s calendar"
+        }
+    ],
+    "myCalendarGuest": [{
+        "type": 0,
+        "value": "Calendar"
+    }],
+    "selectLang": [{
+        "type": 0,
+        "value": "Select language"
+    }],
+    "signInTitle": [{
+        "type": 0,
+        "value": "Sign in"
+    }],
+    "signUpTitle": [{
+        "type": 0,
+        "value": "Sign up"
+    }],
+    "signupLink": [{
+        "type": 0,
+        "value": "Signup"
+    }],
+    "title": [{
+        "type": 0,
+        "value": "Events"
+    }],
+    "to": [{
+        "type": 0,
+        "value": "To"
+    }],
+    "userId": [{
+        "type": 0,
+        "value": "User Id"
+    }],
+    "username": [{
+        "type": 0,
+        "value": "Username"
+    }],
+    "titleComponent": [{
+        "type": 0,
+        "value": "Title"
+    }],
+    "save": [{
+        "type": 0,
+        "value": "Save"
+    }],
+    "cancel": [{
+        "type": 0,
+        "value": "Cancel"
+    }],
+    "delete": [{
+        "type": 0,
+        "value": "Delete"
+    }],
+    "edit": [{
+        "type": 0,
+        "value": "Edit"
+    }],
+    "agree": [{
+        "type": 0,
+        "value": "Agree"
+    }],
+    "deleteConfirmTitle": [{
+        "type": 0,
+        "value": "Delete confirmation"
+    }],
+    "deleteConfirmMessage": [{
+        "type": 0,
+        "value": "Are you sure you want to delete permanently this event?"
+    }]
+
 }
