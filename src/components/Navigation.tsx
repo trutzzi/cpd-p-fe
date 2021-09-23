@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { NavLink } from "react-router-dom";
 import Select from '@material-ui/core/Select';
 import FormLabel from '@material-ui/core/FormLabel';
-import languages from '../languages'
+import LANGUAGES from '../languages'
 import MenuItem from '@material-ui/core/MenuItem';
 import { FormattedMessage } from 'react-intl'
 
@@ -57,7 +57,7 @@ const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage
           defaultValue={'en-English'}
           onChange={onChangeLanguage}
         >
-          {languages.map((item, key) => <MenuItem key={`lang-${key}`} value={`${item.value}-${item.name}`} > {item.name}</MenuItem>)}
+          {LANGUAGES.map((item, key) => <MenuItem key={`lang-${key}`} value={`${item.value}-${item.name}`} > {item.name}</MenuItem>)}
         </Select>
       </div>
     </nav>

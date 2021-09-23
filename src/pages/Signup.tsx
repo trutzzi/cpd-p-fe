@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useContext } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -6,13 +6,21 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from 'react-intl'
 import { ToastContainer, toast } from 'react-toastify';
 import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
+import { AuthContext, AuthContextType } from '../App';
 
 
 type SignupProps = {
-  onSignIn: any;
 }
 
-const Signup: FC<SignupProps> = ({ onSignIn: signIn }) => {
+type SignInResponseType = {
+  id: number | number,
+  userId: number | number,
+
+  error?: { message: string }
+}
+
+const Signup: FC<SignupProps> = () => {
+  const { setRole, setUserId, setToken } = useContext<any>(AuthContext);
 
   const [login, setLogin] = useState({
     username: null,
@@ -39,27 +47,34 @@ const Signup: FC<SignupProps> = ({ onSignIn: signIn }) => {
     });
   }
 
-  const onSignIn = async () => {
+  const doSignIn = async () => {
     const body = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify(login)
     }
     const req = await fetch(LOGIN_REQ, body);
-    const res: { id: string, userId: string, error?: { message: string } } = await req.json();
+
+    // TODO: Role system implement
+    const { id: token, userId, error }: SignInResponseType = await req.json();
     if (req.status === 200) {
-      toast.success('Login successfully')
+      toast.success('Step 1 login ready.')
       // Set Login preserve
-      localStorage.setItem('id', res.id);
-      localStorage.setItem('user_id', res.userId);
-      signIn();
+      setPreserveUsername(token, userId, null);
+      setAuthContext(token, userId, null);
     }
-    else {
-      toast.error(res.error?.message);
-    }
+  }
+  const setPreserveUsername = (token: number, userId: number, role: number | null) => {
+    localStorage.setItem('token', token.toString());
+    localStorage.setItem('user_id', userId.toString());
+    localStorage.setItem('role', role?.toString() || 'null');
+  }
+  const setAuthContext = (token: number, userId: number, role: null) => {
+    setRole(role);
+    setToken(token);
+    setUserId(userId);
   }
 
   const onSignUp = async () => {
@@ -112,7 +127,7 @@ const Signup: FC<SignupProps> = ({ onSignIn: signIn }) => {
           <form autoComplete="on">
             <TextField fullWidth required name="username" onChange={(e) => handleSignInInput(e)} label="Username" />
             <TextField required name="password" onChange={(e) => handleSignInInput(e)} label="Password" type="password" />
-            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignIn()} color="primary" >
+            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => doSignIn()} color="primary" >
               <FormattedMessage
                 id="signInTitle"
                 defaultMessage="Sign in"

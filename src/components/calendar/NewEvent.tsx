@@ -61,7 +61,7 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
     setData({ ...data, start: startDate, end: endDate });
   }, [startDate, endDate])
   useEffect(() => {
-    const isModified = data.title == '' || data.description == ''
+    const isModified = data.title === '' || data.description === ''
     setIsCreateDisabled(isModified)
   }, [data])
   useEffect(() => {

@@ -1,13 +1,16 @@
-import { dologinRequest } from "../App";
+import { doLoginRequest } from "../App";
 
 describe("Member areea test ", () => {
   test("Test Login JohnDoe", async () => {
-    expect(await dologinRequest('1', 'Qw5a6u6EKCEtnYCH06cPK2eAb5wyspVdCNt3qGnn549WOfV7Yw0i7c0yRUL0biNS')).toEqual({
-      realm: null,
-      username: 'John',
-      email: 'john@doe.com',
+    const expectedResult = {
+      email: "john@doe.com",
       emailVerified: null,
-      id: 1
-    })
+      id: 1,
+      realm: null,
+      username: "John"
+    };
+    const [loginRes, loginStatus] = await doLoginRequest('1', 'xOkJMWQEgcOLNk9BeTT6TwcWNc79PFLGIH9UtgwLUR6mY7hBgkTQubh0ix8Xh1Mz');
+
+    expect(loginRes).toEqual(expectedResult)
   })
 })

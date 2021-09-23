@@ -1,4 +1,4 @@
-const languages = [
+const LANGUAGES = [
   {
     name: 'Romana',
     value: 'ro'
@@ -8,4 +8,4 @@ const languages = [
     value: 'en'
   },
 ]
-export default languages;
+export default LANGUAGES;

@@ -29,7 +29,9 @@ type StartEndEventType = { start: string | Date, end: string | Date }
 
 const localizer = momentLocalizer(moment);
 
-const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
+const CalendarComponent: FC<CalendarComponentProps> = () => {
+  const { userId, username, token } = useContext<any>(AuthContext);
+
   const [loaded, setLoaded] = useState(false);
   const [eventsData, setEventsData] = useState([]);
   const [openNewModal, setOpenNewModal] = useState(false);
@@ -37,11 +39,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   const [eventModalDetail, setEventModalDetail] = useState<SelectEventType>();
   const [openDetail, setOpenDetail] = useState(false);
 
-  const getAuthContext = useContext(AuthContext);
-  const username = getAuthContext.username;
-  const token = useMemo(() => localStorage.getItem('id'), [username]);
-
-  const createNewEvent = async (event: dataObj) => {
+  const createEvent = async (event: dataObj) => {
     const newEvent = { ...event, userId: userId };
     const insertEventRequest = await fetch(NEW_REQ + token, {
       method: 'POST',
@@ -184,7 +182,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
           style={{ height: 600 }
           }
         /> : <><WarningIcon style={{ color: 'orange', verticalAlign: "middle", marginRight: 3 }} /><span style={{ verticalAlign: 'middle' }}>API Offline!</span></>}
-      <NewEvent onNewEvent={createNewEvent} OpenDetailClose={OpenNewClose} startDate={newEventSlot.start} endDate={newEventSlot.end} open={openNewModal} />
+      <NewEvent onNewEvent={createEvent} OpenDetailClose={OpenNewClose} startDate={newEventSlot.start} endDate={newEventSlot.end} open={openNewModal} />
       {eventModalDetail && <EventDetails onUpdate={(id, body, close) => updateEvent(id, body, close)} confirmed={eventModalDetail.confirmed} onDelete={deleteEvent} id={eventModalDetail.id} username={eventModalDetail.username} OpenDetailClose={OpenDetailClose} title={eventModalDetail.title} start={eventModalDetail.start} end={
         eventModalDetail.end} description={eventModalDetail.description} open={openDetail} />
       }
