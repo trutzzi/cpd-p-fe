@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl'
 import { ToastContainer, toast } from 'react-toastify';
 import { LOGIN_REQ, SIGNUP_REQ } from '../constants/constants';
 import { AuthContext, AuthContextType } from '../App';
-
+import { useIntl } from 'react-intl';
 
 type SignupProps = {
 }
@@ -20,8 +20,9 @@ type SignInResponseType = {
 }
 
 const Signup: FC<SignupProps> = () => {
-  const { setRole, setUserId, setToken } = useContext<any>(AuthContext);
+  const intl = useIntl()
 
+  const { setRole, setUserId, setToken } = useContext<any>(AuthContext);
   const [login, setLogin] = useState({
     username: null,
     password: null
@@ -61,7 +62,6 @@ const Signup: FC<SignupProps> = () => {
     const { id: token, userId, error }: SignInResponseType = await req.json();
     if (req.status === 200) {
       toast.success('Step 1 login ready.')
-      // Set Login preserve
       setPreserveUsername(token, userId, null);
       setAuthContext(token, userId, null);
     }
@@ -73,8 +73,8 @@ const Signup: FC<SignupProps> = () => {
   }
   const setAuthContext = (token: number, userId: number, role: null) => {
     setRole(role);
-    setToken(token);
     setUserId(userId);
+    setToken(token);
   }
 
   const onSignUp = async () => {
@@ -106,9 +106,24 @@ const Signup: FC<SignupProps> = () => {
             />
           </Typography>
           <form autoComplete="on">
-            <TextField fullWidth required name="username" onChange={(e) => handleSignUpInput(e)} label="Username" />
-            <TextField fullWidth required name="password" onChange={(e) => handleSignUpInput(e)} label="Password" type="password" />
-            <TextField fullWidth required name="email" onChange={(e) => handleSignUpInput(e)} label="E-mail" />
+            <TextField fullWidth required name="username" onChange={(e) => handleSignUpInput(e)} label={intl.formatMessage(
+              {
+                id: "username",
+                defaultMessage: "Username"
+              },
+            )} />
+            <TextField fullWidth required name="password" onChange={(e) => handleSignUpInput(e)} label={intl.formatMessage(
+              {
+                id: "password",
+                defaultMessage: "Password"
+              },
+            )} type="password" />
+            <TextField fullWidth required name="email" onChange={(e) => handleSignUpInput(e)} label={intl.formatMessage(
+              {
+                id: "email",
+                defaultMessage: "E-mail"
+              },
+            )} />
             <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignUp()} color="primary">
               <FormattedMessage
                 id="signUpTitle"
@@ -125,8 +140,18 @@ const Signup: FC<SignupProps> = () => {
             />
           </Typography>
           <form autoComplete="on">
-            <TextField fullWidth required name="username" onChange={(e) => handleSignInInput(e)} label="Username" />
-            <TextField required name="password" onChange={(e) => handleSignInInput(e)} label="Password" type="password" />
+            <TextField fullWidth required name="username" onChange={(e) => handleSignInInput(e)} label={intl.formatMessage(
+              {
+                id: "username",
+                defaultMessage: "Username"
+              },
+            )} />
+            <TextField fullWidth required name="password" onChange={(e) => handleSignInInput(e)} label={intl.formatMessage(
+              {
+                id: "password",
+                defaultMessage: "Parola"
+              },
+            )} type="password" />
             <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => doSignIn()} color="primary" >
               <FormattedMessage
                 id="signInTitle"

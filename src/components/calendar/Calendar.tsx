@@ -10,6 +10,7 @@ import { CalendarProps as CalendarComponentProps, SelectEventType as SelectEvent
 import { AuthContext } from '../../App';
 import { UpdateEventType } from './CalendarDetail';
 import WarningIcon from '@material-ui/icons/Warning';
+import Typography from '@material-ui/core/Typography';
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -152,7 +153,7 @@ const CalendarComponent: FC<CalendarComponentProps> = () => {
   }
   return (
     <div>
-      <h3 style={{ marginBottom: '10px', textTransform: 'capitalize' }}>
+      <Typography style={{ marginBottom: 20, marginTop: 10 }} variant="h3" component="h3">
         {username ?
           <FormattedMessage
             id="myCalendar"
@@ -169,7 +170,7 @@ const CalendarComponent: FC<CalendarComponentProps> = () => {
             defaultMessage="Calendar"
             description="Calendar"
           />}
-      </h3 >
+      </Typography>
       {
         loaded ? <Calendar
           localizer={localizer}

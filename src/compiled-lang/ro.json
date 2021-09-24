@@ -33,7 +33,7 @@
     }],
     "languageText": [{
             "type": 0,
-            "value": "Limba a fost setata in "
+            "value": "Limba a fost schimbata "
         },
         {
             "type": 1,
@@ -75,7 +75,7 @@
     }],
     "signupLink": [{
         "type": 0,
-        "value": "Creaza"
+        "value": "Zona membrii"
     }],
     "title": [{
         "type": 0,
@@ -124,6 +124,10 @@
     "deleteConfirmMessage": [{
         "type": 0,
         "value": "Sunteti sigur ca vreti sa stergeti acest eveniment definitiv?"
+    }],
+    "password": [{
+        "type": 0,
+        "value": "Parola"
     }]
 
 }

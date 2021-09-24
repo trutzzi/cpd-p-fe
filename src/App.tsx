@@ -58,19 +58,21 @@ export const doLoginRequest: (id: string, token: string) => Promise<loginRequest
 }
 
 function App() {
-  const [locale, setLocale] = useState('en');
+  const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en');
+  moment.locale(locale);
   const [username, setUsername] = useState<string | null>(null);
-  const [role, setRole] = useState<null | string>(localStorage.getItem('token') || null);
+  const [role, setRole] = useState<null | string>(localStorage.getItem('role') || null);
   const [userId, setUserId] = useState<number | null>(Number(localStorage.getItem('user_id')) || null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token') || null)
   const [isMenuOpened, setIsMenuOpened] = useState(false);
   const [loggedInMenuAnchorEl, setLoggedInMenuAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
   const isLoggedInMenuOpened = Boolean(loggedInMenuAnchorEl);
   const [translatedMessages, setTranslatedMessages] = useState<any>(getTranslatedMessages(locale));
+  console.log('uId', userId);
 
   // TODO: How to build type check for custom hook and single render
   const [loginRequestData, loginRequestStatus, loginRequestError] = useFetch(`${GET_DETAIL}${userId}?access_token=${token}`);
-  
+
   useEffect(() => {
     token && checkLogIn()
   }, [token, loginRequestData]);
@@ -101,15 +103,16 @@ function App() {
       toast.error(e as ToastContent)
     }
   };
+
   const cleanLogInfo = () => {
     setUserId(null);
     setUsername(null);
+    setToken(null);
     localStorage.clear();
   }
 
   const checkLogIn = async function () {
     if (userId && token) {
-      console.log('sts', loginRequestStatus);
       switch (loginRequestStatus) {
         case 401:
           toast.error('Unauthorise request 401')
@@ -118,13 +121,6 @@ function App() {
           setUsername(loginRequestData?.username)
           break
       }
-      if (loginRequestError) {
-        toast.error('Unauthorise request detected!');
-        cleanLogInfo();
-      }
-    } else {
-      cleanLogInfo();
-      toast.error('Unauthorise request detected!');
     }
   };
 
@@ -133,19 +129,13 @@ function App() {
     value: unknown;
   }>) => {
     const value = e.target.value as string;
-    const extractLang = value.split('-');
-    moment.locale(extractLang[0]);
-    setLocale(extractLang[0]);
+    setLocale(value);
+    localStorage.setItem('locale', value);
     toast.success(
       <FormattedMessage
         id="languageText"
         description='Language set message'
-        defaultMessage='Language has been set to {lang}'
-        values={
-          {
-            lang: extractLang[1],
-          }
-        }
+        defaultMessage='Limba a fost schimbata'
       />
     )
   }
@@ -201,7 +191,7 @@ function App() {
             <MemoryRouter initialEntries={['']} initialIndex={0}>
               <Router>
                 <div className="page">
-                  <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setIsMenuOpened} username={username} />
+                  <Navigation locale={locale} onChangeLanguage={handleChangeLanguage} toggleNav={setIsMenuOpened} username={username} />
                   <div className="page-container">
                     <AppBar position="static">
                       <Toolbar>

@@ -32,14 +32,9 @@
         "value": "Home"
     }],
     "languageText": [{
-            "type": 0,
-            "value": "Language has been set to "
-        },
-        {
-            "type": 1,
-            "value": "lang"
-        }
-    ],
+        "type": 0,
+        "value": "Language has been changed. "
+    }],
     "logout": [{
         "type": 0,
         "value": "Logut"
@@ -75,7 +70,7 @@
     }],
     "signupLink": [{
         "type": 0,
-        "value": "Signup"
+        "value": "Members areea"
     }],
     "title": [{
         "type": 0,
@@ -124,6 +119,9 @@
     "deleteConfirmMessage": [{
         "type": 0,
         "value": "Are you sure you want to delete permanently this event?"
+    }],
+    "password": [{
+        "type": 0,
+        "value": "Password"
     }]
-
 }

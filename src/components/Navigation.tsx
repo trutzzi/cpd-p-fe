@@ -9,6 +9,7 @@ import { FormattedMessage } from 'react-intl'
 
 interface NavigationProps {
   username: string | null,
+  locale: string,
   toggleNav: React.Dispatch<React.SetStateAction<boolean>>
   onChangeLanguage: (e: React.ChangeEvent<{
     name?: string | undefined;
@@ -16,7 +17,7 @@ interface NavigationProps {
   }>) => void;
 }
 
-const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage }) => {
+const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage, locale }) => {
 
   return (
     <nav className="navigation" role="navigation">
@@ -39,7 +40,7 @@ const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage
           {!username && <li><NavLink onClick={() => toggleNav(false)} exact activeClassName='active' to="/signup">
             <FormattedMessage
               id="signupLink"
-              defaultMessage="Signup"
+              defaultMessage="Members areea"
               description="Signup link"
             />
           </NavLink ></li>}
@@ -54,10 +55,10 @@ const Navigation: FC<NavigationProps> = ({ username, toggleNav, onChangeLanguage
         <Select
           style={{ border: '1px solid #fff', color: '#fff', borderRadius: '5px', width: "170px", marginLeft: '10px', paddingLeft: '10px' }}
           labelId="language-set"
-          defaultValue={'en-English'}
+          defaultValue={locale}
           onChange={onChangeLanguage}
         >
-          {LANGUAGES.map((item, key) => <MenuItem key={`lang-${key}`} value={`${item.value}-${item.name}`} > {item.name}</MenuItem>)}
+          {LANGUAGES.map((item, key) => <MenuItem key={`lang-${key}`} value={`${item.value}`} > {item.name}</MenuItem>)}
         </Select>
       </div>
     </nav>
