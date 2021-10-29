@@ -18,6 +18,7 @@ import useFetch from './custom-hooks/useFetch';
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
+import events from './react-big-calendar/examples/events';
 export type AuthContextType = {
   username: string | null,
   setUsername: React.Dispatch<React.SetStateAction<string | null>>,
@@ -68,10 +69,8 @@ function App() {
   const [loggedInMenuAnchorEl, setLoggedInMenuAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
   const isLoggedInMenuOpened = Boolean(loggedInMenuAnchorEl);
   const [translatedMessages, setTranslatedMessages] = useState<any>(getTranslatedMessages(locale));
-  console.log('uId', userId);
 
-  // TODO: How to build type check for custom hook and single render
-  const [loginRequestData, loginRequestStatus, loginRequestError] = useFetch(`${GET_DETAIL}${userId}?access_token=${token}`);
+  const [loginRequestData, loginRequestStatus, loginRequestError] = useFetch(`${GET_DETAIL}${userId}?access_token=${token}`, {}, token);
 
   useEffect(() => {
     token && checkLogIn()
@@ -224,7 +223,7 @@ function App() {
                       </Route>
                       <Switch>
                         <Route exact path="/">
-                          <Calendar username={username} userId={userId} onLocale={locale} />
+                          {events.length && <Calendar username={username} userId={userId} onLocale={locale} />}
                         </Route>
                         <Route exact path="/signup">
                           {username ? <Redirect to="/" /> : <Signup />}

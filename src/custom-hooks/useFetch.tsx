@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-const useFetch = (url: any, options = {}) => {
+// Fetch data url based on options and a trigger dependecy 
+// @param {string} url - url of fetch, {object} options to fetch -  exemple put, get, post , {any} dependecy for trigger 
+const useFetch = (url: any, options = {}, dependecy: any) => {
   const [response, setResponse] = useState<any>(null);
   const [status, setStatus] = useState<null | number>(null);
   const [error, setError] = useState<null | unknown>(null);
@@ -16,8 +18,8 @@ const useFetch = (url: any, options = {}) => {
         setError(error);
       }
     };
-    fetchData();
-  }, []);
+    dependecy && fetchData();
+  }, [dependecy]);
 
 
   return [response, status, error];

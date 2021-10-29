@@ -1,6 +1,6 @@
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer } from '../../react-big-calendar/src';
 import moment from 'moment'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import React, { useState, FC, useEffect, useContext, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from '../../constants/constants';
@@ -32,6 +32,8 @@ const localizer = momentLocalizer(moment);
 
 const CalendarComponent: FC<CalendarComponentProps> = () => {
   const { userId, username, token } = useContext<any>(AuthContext);
+
+  const intl = useIntl();
 
   const [loaded, setLoaded] = useState(false);
   const [eventsData, setEventsData] = useState([]);
@@ -173,6 +175,36 @@ const CalendarComponent: FC<CalendarComponentProps> = () => {
       </Typography>
       {
         loaded ? <Calendar
+          navigationButtons={{
+            previous: intl.formatMessage({
+              id: "previous",
+              defaultMessage: "Previous"
+            }),
+            next: intl.formatMessage({
+              id: "next",
+              defaultMessage: "Next"
+            }),
+            today: intl.formatMessage({
+              id: "today",
+              defaultMessage: "Today"
+            }),
+            agenda: intl.formatMessage({
+              id: "agenda",
+              defaultMessage: "Agenda"
+            }),
+            month: intl.formatMessage({
+              id: "month",
+              defaultMessage: "Month"
+            }),
+            week: intl.formatMessage({
+              id: "week",
+              defaultMessage: "Week"
+            }),
+            day: intl.formatMessage({
+              id: "day",
+              defaultMessage: "Day"
+            })
+          }}
           localizer={localizer}
           events={eventsData}
           startAccessor="start"

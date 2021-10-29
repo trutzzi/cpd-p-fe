@@ -202,6 +202,13 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
         <PersonIcon style={{ fontSize: '16px' }} />{username}  <DateRangeIcon style={{ fontSize: '16px', marginLeft: '10px' }} /> {Moment(start).format('DD-MM-yyyy')} -  {Moment(end).format('DD-MM-yyyy')}
       </div>
       {isEventMine && <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} variant="contained" disableElevation aria-label="outlined primary button group">
+        <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={confirmDeleteDialog}>
+          <FormattedMessage
+            id="delete"
+            defaultMessage="Delete"
+            description="Delete"
+          />
+        </Button>
         <Button style={{ marginTop: '10px' }} variant="contained" color="primary" onClick={() => setEditMode(false)}>
           <FormattedMessage
             id="cancel"
@@ -214,13 +221,6 @@ const EventDetails: FC<CalendarDetailProps> = ({ title, id, description, confirm
             id="save"
             defaultMessage="Save"
             description="Save"
-          />
-        </Button>
-        <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" onClick={confirmDeleteDialog}>
-          <FormattedMessage
-            id="delete"
-            defaultMessage="Delete"
-            description="Delete"
           />
         </Button>
       </ButtonGroup>

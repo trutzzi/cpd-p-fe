@@ -11,6 +11,7 @@ import {
 import MomentUtils from '@date-io/moment';
 import moment from "moment";
 import { dataObj } from '../../types/EventTypes'
+import { useIntl, FormattedMessage } from 'react-intl';
 
 type NewDetailType = {
   open: boolean,
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startDate, endDate }) => {
+  const intl = useIntl();
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [isCreateDisabled, setIsCreateDisabled] = useState(false);
@@ -91,7 +93,10 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
             format="DD-MM-yyyy"
             margin="normal"
             id="date-picker-inline"
-            label="Event start date"
+            label={intl.formatMessage({
+              id: "from",
+              defaultMessage: "From"
+            })}
             value={data.start}
             onChange={handleDateChangeStart}
             KeyboardButtonProps={{
@@ -104,7 +109,10 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
             format="DD-MM-yyyy"
             margin="normal"
             id="date-picker-inline2"
-            label="Event end date"
+            label={intl.formatMessage({
+              id: "to",
+              defaultMessage: "To"
+            })}
             value={data.end}
             onChange={handleDateChangeEnd}
             KeyboardButtonProps={{
@@ -112,8 +120,18 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
             }}
           />
           <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }} disableElevation variant="contained" aria-label="outlined primary button group">
-            <Button onClick={() => onNewEvent(data)} disabled={isCreateDisabled} color="secondary">Create</Button>
-            <Button onClick={() => OpenDetailClose()} color="primary" >Cancel</Button>
+            <Button onClick={() => onNewEvent(data)} disabled={isCreateDisabled} color="secondary">
+              <FormattedMessage
+                id="create"
+                defaultMessage="Create"
+              />
+            </Button>
+            <Button onClick={() => OpenDetailClose()} color="primary" >
+              <FormattedMessage
+                id="cancel"
+                defaultMessage="Cancel"
+              />
+            </Button>
           </ButtonGroup>
         </MuiPickersUtilsProvider>
       </form>

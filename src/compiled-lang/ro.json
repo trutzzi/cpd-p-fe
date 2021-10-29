@@ -113,6 +113,10 @@
         "type": 0,
         "value": "Editeaza"
     }],
+    "create": [{
+        "type": 0,
+        "value": "Creaza"
+    }],
     "agree": [{
         "type": 0,
         "value": "De accord"
@@ -128,6 +132,34 @@
     "password": [{
         "type": 0,
         "value": "Parola"
+    }],
+    "agenda": [{
+        "type": 0,
+        "value": "Agenda"
+    }],
+    "previous": [{
+        "type": 0,
+        "value": "Precedent"
+    }],
+    "next": [{
+        "type": 0,
+        "value": "Urmatorul"
+    }],
+    "today": [{
+        "type": 0,
+        "value": "Azi"
+    }],
+    "month": [{
+        "type": 0,
+        "value": "Luna"
+    }],
+    "week": [{
+        "type": 0,
+        "value": "Saptamana"
+    }],
+    "day": [{
+        "type": 0,
+        "value": "Zi"
     }]
 
 }

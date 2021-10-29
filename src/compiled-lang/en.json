@@ -108,6 +108,10 @@
         "type": 0,
         "value": "Edit"
     }],
+    "create": [{
+        "type": 0,
+        "value": "Create"
+    }],
     "agree": [{
         "type": 0,
         "value": "Agree"
@@ -120,8 +124,32 @@
         "type": 0,
         "value": "Are you sure you want to delete permanently this event?"
     }],
-    "password": [{
+    "agenda": [{
         "type": 0,
-        "value": "Password"
+        "value": "Agenda"
+    }],
+    "previous": [{
+        "type": 0,
+        "value": "Previews"
+    }],
+    "next": [{
+        "type": 0,
+        "value": "Next"
+    }],
+    "today": [{
+        "type": 0,
+        "value": "Today"
+    }],
+    "month": [{
+        "type": 0,
+        "value": "Month"
+    }],
+    "week": [{
+        "type": 0,
+        "value": "Week"
+    }],
+    "day": [{
+        "type": 0,
+        "value": "Day"
     }]
 }
