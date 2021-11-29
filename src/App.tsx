@@ -18,7 +18,6 @@ import useFetch from './custom-hooks/useFetch';
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
-import events from './react-big-calendar/examples/events';
 export type AuthContextType = {
   username: string | null,
   setUsername: React.Dispatch<React.SetStateAction<string | null>>,
@@ -223,7 +222,7 @@ function App() {
                       </Route>
                       <Switch>
                         <Route exact path="/">
-                          {events.length && <Calendar username={username} userId={userId} onLocale={locale} />}
+                          { <Calendar username={username} userId={userId} onLocale={locale} />}
                         </Route>
                         <Route exact path="/signup">
                           {username ? <Redirect to="/" /> : <Signup />}
