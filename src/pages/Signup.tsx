@@ -15,24 +15,82 @@ type SignupProps = {
 type SignInResponseType = {
   id: number | number,
   userId: number | number,
-
   error?: { message: string }
+} | null
+
+type SignUpBodyType = {
+  username: null | string,
+  password: null | string,
+  email: null | string
+}
+type LoginBodyType = {
+  username: null | string,
+  password: null | string
+}
+
+
+// TODO: De exportat functia pentru unitest
+export const onSignUp = async (signUpBody: SignUpBodyType) => {
+  const body = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(signUpBody)
+  }
+  const req = await fetch(SIGNUP_REQ, body);
+  const res: { error: { message: string } } = await req.json();
+  if (req.status === 200) {
+    toast.success('Username was created')
+  } else {
+    toast.error(res.error?.message);
+  }
+  return { status: req.status, response: res };
+}
+
+export const doSignInReq = async (loginBody: LoginBodyType) => {
+  const body = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(loginBody)
+  }
+  const req = await fetch(LOGIN_REQ, body);
+  // TODO: Role system implement
+  let jsonResponse: SignInResponseType = null;
+  if (req.status === 200) {
+    jsonResponse = await req.json();
+  }
+  return { status: req.status, response: jsonResponse }
 }
 
 const Signup: FC<SignupProps> = () => {
   const intl = useIntl()
 
   const { setRole, setUserId, setToken } = useContext<any>(AuthContext);
-  const [login, setLogin] = useState({
+  const [login, setLogin] = useState<LoginBodyType>({
     username: null,
     password: null
   });
 
-  const [signUp, setSignUp] = useState({
+  const [signUp, setSignUp] = useState<SignUpBodyType>({
     username: null,
     password: null,
     email: null
   });
+
+  const doSignIn = async () => {
+    const loginStatusReq = doSignInReq(login);
+    const { status, response } = await loginStatusReq;
+
+    if (status === 200) {
+      toast.success('Logged in.')
+      setPreserveUsername(response!.id, response!.userId, null);
+      setAuthContext(response!.id, response!.userId, null);
+    }
+  }
+
 
   const handleSignInInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -48,24 +106,6 @@ const Signup: FC<SignupProps> = () => {
     });
   }
 
-  const doSignIn = async () => {
-    const body = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(login)
-    }
-    const req = await fetch(LOGIN_REQ, body);
-
-    // TODO: Role system implement
-    const { id: token, userId, error }: SignInResponseType = await req.json();
-    if (req.status === 200) {
-      toast.success('Step 1 login ready.')
-      setPreserveUsername(token, userId, null);
-      setAuthContext(token, userId, null);
-    }
-  }
   const setPreserveUsername = (token: number, userId: number, role: number | null) => {
     localStorage.setItem('token', token.toString());
     localStorage.setItem('user_id', userId.toString());
@@ -75,23 +115,6 @@ const Signup: FC<SignupProps> = () => {
     setRole(role);
     setUserId(userId);
     setToken(token);
-  }
-
-  const onSignUp = async () => {
-    const body = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(signUp)
-    }
-    const req = await fetch(SIGNUP_REQ, body);
-    const res: { error: { message: string } } = await req.json();
-    if (req.status === 200) {
-      toast.success('Username was created')
-    } else {
-      toast.error(res.error?.message);
-    }
   }
 
   return (
@@ -124,7 +147,7 @@ const Signup: FC<SignupProps> = () => {
                 defaultMessage: "E-mail"
               },
             )} />
-            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignUp()} color="primary">
+            <Button style={{ display: 'block', marginTop: 10 }} variant="contained" onClick={() => onSignUp(signUp)} color="primary">
               <FormattedMessage
                 id="signUpTitle"
                 defaultMessage="Sign up"

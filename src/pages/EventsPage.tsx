@@ -24,7 +24,6 @@ const columns: ColumnType[] = [
   {
     id: 'id',
     label: 'Id',
-    minWidth: 100
   },
   {
     id: 'title',
@@ -32,7 +31,6 @@ const columns: ColumnType[] = [
       id="title"
       defaultMessage="Events"
     />,
-    minWidth: 200
   },
   {
     id: 'start',
@@ -40,7 +38,6 @@ const columns: ColumnType[] = [
       id="from"
       defaultMessage="From"
     />,
-    minWidth: 200,
     align: 'right',
     format: (value: string) => Moment(value).format('DD-MM-yyyy'),
   },
@@ -50,7 +47,6 @@ const columns: ColumnType[] = [
       id="to"
       defaultMessage="To"
     />,
-    minWidth: 200,
     align: 'right',
     format: (value: string) => Moment(value).format('DD-MM-yyyy'),
   },
@@ -60,7 +56,6 @@ const columns: ColumnType[] = [
       id="description"
       defaultMessage="Description"
     />,
-    minWidth: 230,
     align: 'right',
   },
   {
@@ -69,7 +64,6 @@ const columns: ColumnType[] = [
       id="userId"
       defaultMessage="User Id"
     />,
-    minWidth: 230,
     align: 'right',
   },
   {
@@ -78,7 +72,6 @@ const columns: ColumnType[] = [
       id="username"
       defaultMessage="Username"
     />,
-    minWidth: 230,
     align: 'right'
   },
 ];

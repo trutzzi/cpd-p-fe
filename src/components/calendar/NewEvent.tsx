@@ -97,6 +97,7 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
               id: "from",
               defaultMessage: "From"
             })}
+            disablePast={true}
             value={data.start}
             onChange={handleDateChangeStart}
             KeyboardButtonProps={{
@@ -107,6 +108,7 @@ const NewEvent: FC<NewDetailType> = ({ open, OpenDetailClose, onNewEvent, startD
             disableToolbar
             variant="inline"
             format="DD-MM-yyyy"
+            disablePast={true}
             margin="normal"
             id="date-picker-inline2"
             label={intl.formatMessage({

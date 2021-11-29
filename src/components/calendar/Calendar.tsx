@@ -1,5 +1,5 @@
 import { Calendar, momentLocalizer } from '../../react-big-calendar/src';
-import moment from 'moment'
+import moment, { locale } from 'moment'
 import { FormattedMessage, useIntl } from 'react-intl'
 import React, { useState, FC, useEffect, useContext, useMemo } from 'react';
 import { toast } from 'react-toastify';
@@ -104,8 +104,10 @@ const CalendarComponent: FC<CalendarComponentProps> = () => {
       event = { ...event, start: new Date(event.start), end: new Date(event.end), users: event.users }
       return event;
     })
-    setEventsData(procesingRes);
-    setLoaded(true);
+    if (CalendarEventsRequest.status === 200) {
+      setEventsData(procesingRes);
+      setLoaded(true);
+    }
   }
 
   useEffect(() => {
