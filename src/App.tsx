@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch, MemoryRouter } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, MenuItem, IconButton, Menu, Container } from '@material-ui/core';
@@ -8,23 +8,38 @@ import Navigation from './components/Navigation'
 import Breadcrump from './components/Breadcrump';
 import Signup from './pages/Signup';
 import EventsPage from './pages/EventsPage';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer, ToastContent } from 'react-toastify';
 import { GET_DETAIL, LOGOUT_REQ } from './constants/constants';
 import theme from './theme';
 import 'moment/min/locales';
 import { IntlProvider, FormattedMessage } from 'react-intl'
+import useFetch from './custom-hooks/useFetch';
 
 // TODO: End date is a bit off with one day, fix it!
 import './App.css';
 import moment from 'moment';
-
-type AuthContextType = { username: string | null, role: any }
-type checkLogInType = {
+import events from './react-big-calendar/examples/events';
+export type AuthContextType = {
+  username: string | null,
+  setUsername: React.Dispatch<React.SetStateAction<string | null>>,
+  role: number | null,
+  setRole: React.Dispatch<React.SetStateAction<number | null>>,
+  token: string | null,
+  setToken: React.Dispatch<React.SetStateAction<number | null>>,
+  userId: number | null,
+  setUserId: React.Dispatch<React.SetStateAction<number | null>>
+}
+type loginObjType = {
   id: number,
   username: string
-}
+};
 
-function loadTranslatedMessages(locale: any): any {
+type loginRequestType = [
+  loginObjType,
+  number
+];
+
+function getTranslatedMessages(locale: any): any {
   switch (locale) {
     case "en":
       return import("./compiled-lang/en.json");
@@ -35,42 +50,44 @@ function loadTranslatedMessages(locale: any): any {
   }
 }
 
-export const AuthContext = React.createContext<AuthContextType>({ username: null, role: null });
+export const AuthContext = React.createContext<AuthContextType | {}>({});
 
-export const dologinRequest: (id: string, token: string) => Promise<checkLogInType> = async (id, token) => {
+export const doLoginRequest: (id: string, token: string) => Promise<loginRequestType> = async (id, token) => {
   const loginRequest = await fetch(`${GET_DETAIL}${id}?access_token=${token}`);
-  const loginResponse: Promise<checkLogInType> = await loginRequest.json();
-  return loginResponse;
-
+  const loginResponse = await loginRequest.json();
+  return [loginResponse, loginRequest.status];
 }
 
 function App() {
-  const [locale, setLocale] = useState('en');
+  const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en');
+  moment.locale(locale);
   const [username, setUsername] = useState<string | null>(null);
-  const [role, setRole] = useState(null);
-  const [userId, setUserId] = useState<number | null>(null);
-  const [openMenu, setOpenMenu] = useState(false);
+  const [role, setRole] = useState<null | string>(localStorage.getItem('role') || null);
+  const [userId, setUserId] = useState<number | null>(Number(localStorage.getItem('user_id')) || null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token') || null)
+  const [isMenuOpened, setIsMenuOpened] = useState(false);
   const [loggedInMenuAnchorEl, setLoggedInMenuAnchorEl] = useState<EventTarget & HTMLButtonElement | null>(null);
-  const open = Boolean(loggedInMenuAnchorEl);
-  const [translatedMessages, setTranslatedMessages] = useState<any>(loadTranslatedMessages(locale));
+  const isLoggedInMenuOpened = Boolean(loggedInMenuAnchorEl);
+  const [translatedMessages, setTranslatedMessages] = useState<any>(getTranslatedMessages(locale));
+
+  const [loginRequestData, loginRequestStatus, loginRequestError] = useFetch(`${GET_DETAIL}${userId}?access_token=${token}`, {}, token);
 
   useEffect(() => {
-    checkLogIn();
-    console.log('checklogin')
-  }, [username]);
+    token && checkLogIn()
+  }, [token, loginRequestData]);
 
-  useEffect(() => loadTranslatedMessages(locale).then((data: any) => setTranslatedMessages(data)), [locale]);
+  useEffect(() => getTranslatedMessages(locale).then((data: any) => setTranslatedMessages(data)), [locale]);
 
-  const handleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setLoggedInMenuAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleCloseMenu = () => {
     setLoggedInMenuAnchorEl(null);
   };
 
   const doLogOut = async function () {
-    const token = localStorage.getItem('id');
+    const token = localStorage.getItem('token');
     try {
       const LogOutRequest = {
         method: 'POST',
@@ -79,25 +96,30 @@ function App() {
         },
       }
       const req = await fetch(LOGOUT_REQ + token, LogOutRequest);
-      window.localStorage.clear()
-      setUsername(null);
-      setRole(null);
+      cleanLogInfo()
       req.status === 200 && toast.success('User logout successfully');
     } catch (e) {
-      console.log(e)
+      toast.error(e as ToastContent)
     }
   };
 
+  const cleanLogInfo = () => {
+    setUserId(null);
+    setUsername(null);
+    setToken(null);
+    localStorage.clear();
+  }
+
   const checkLogIn = async function () {
-    const token = localStorage.getItem('id');
-    const id = localStorage.getItem('user_id');
-    if (id && token) {
-      const res = await dologinRequest(id, token);
-      setUserId(res.id);
-      setUsername(res.username);
-    } else {
-      setUserId(null);
-      setUsername(null);
+    if (userId && token) {
+      switch (loginRequestStatus) {
+        case 401:
+          toast.error('Unauthorise request 401')
+          break
+        case 200:
+          setUsername(loginRequestData?.username)
+          break
+      }
     }
   };
 
@@ -106,20 +128,13 @@ function App() {
     value: unknown;
   }>) => {
     const value = e.target.value as string;
-    const extractLang = value.split('-');
-    moment.locale(extractLang[0]);
-    setLocale(extractLang[0]);
+    setLocale(value);
+    localStorage.setItem('locale', value);
     toast.success(
-
       <FormattedMessage
         id="languageText"
         description='Language set message'
-        defaultMessage='Language has been set to {lang}'
-        values={
-          {
-            lang: extractLang[1],
-          }
-        }
+        defaultMessage='Limba a fost schimbata'
       />
     )
   }
@@ -131,7 +146,7 @@ function App() {
           aria-label="account of current user"
           aria-controls="menu-appbar"
           aria-haspopup="true"
-          onClick={handleMenu}
+          onClick={handleOpenMenu}
           color="inherit"
         >
           <AccountCircle style={{ marginRight: '3px' }} /> {username}
@@ -148,8 +163,8 @@ function App() {
             vertical: 'top',
             horizontal: 'right',
           }}
-          open={open}
-          onClose={handleClose}
+          open={isLoggedInMenuOpened}
+          onClose={handleCloseMenu}
         >
           <MenuItem onClick={doLogOut}>
             <FormattedMessage
@@ -164,8 +179,8 @@ function App() {
   }
 
   return (
-    <div className={openMenu ? 'isMenuOpened App' : 'App'}>
-      <AuthContext.Provider value={{ username, role }}>
+    <div className={isMenuOpened ? 'isMenuOpened App' : 'App'}>
+      <AuthContext.Provider value={{ username, setUsername, role, token, setToken, setRole, userId, setUserId }}>
         <ThemeProvider theme={theme}>
           <IntlProvider
             locale={locale}
@@ -175,12 +190,12 @@ function App() {
             <MemoryRouter initialEntries={['']} initialIndex={0}>
               <Router>
                 <div className="page">
-                  <Navigation onChangeLanguage={handleChangeLanguage} toggleNav={setOpenMenu} username={username} />
+                  <Navigation locale={locale} onChangeLanguage={handleChangeLanguage} toggleNav={setIsMenuOpened} username={username} />
                   <div className="page-container">
                     <AppBar position="static">
                       <Toolbar>
                         <div className="nav-container">
-                          <IconButton onClick={() => setOpenMenu(!openMenu)} edge="start" color="inherit" aria-label="menu">
+                          <IconButton onClick={() => setIsMenuOpened(!isMenuOpened)} edge="start" color="inherit" aria-label="menu">
                             <MenuIcon />
                           </IconButton>
                           <Typography variant="h4">
@@ -208,10 +223,10 @@ function App() {
                       </Route>
                       <Switch>
                         <Route exact path="/">
-                          <Calendar username={username} userId={userId} onLocale={locale} />
+                          {events.length && <Calendar username={username} userId={userId} onLocale={locale} />}
                         </Route>
                         <Route exact path="/signup">
-                          {username ? <Redirect to="/" /> : <Signup onSignIn={checkLogIn} />}
+                          {username ? <Redirect to="/" /> : <Signup />}
                         </Route>
                         <Route exact path="/events">
                           <EventsPage />

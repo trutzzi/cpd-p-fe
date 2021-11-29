@@ -1,6 +1,6 @@
-import { Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
-import { FormattedMessage } from 'react-intl'
+import { Calendar, momentLocalizer } from '../../react-big-calendar/src';
+import moment, { locale } from 'moment'
+import { FormattedMessage, useIntl } from 'react-intl'
 import React, { useState, FC, useEffect, useContext, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { NEW_REQ, DATA_REQ, DELETE_EVENT, UPDATE_EVENT } from '../../constants/constants';
@@ -10,6 +10,7 @@ import { CalendarProps as CalendarComponentProps, SelectEventType as SelectEvent
 import { AuthContext } from '../../App';
 import { UpdateEventType } from './CalendarDetail';
 import WarningIcon from '@material-ui/icons/Warning';
+import Typography from '@material-ui/core/Typography';
 import './CalendarStyle.css';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,7 +30,11 @@ type StartEndEventType = { start: string | Date, end: string | Date }
 
 const localizer = momentLocalizer(moment);
 
-const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
+const CalendarComponent: FC<CalendarComponentProps> = () => {
+  const { userId, username, token } = useContext<any>(AuthContext);
+
+  const intl = useIntl();
+
   const [loaded, setLoaded] = useState(false);
   const [eventsData, setEventsData] = useState([]);
   const [openNewModal, setOpenNewModal] = useState(false);
@@ -37,11 +42,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   const [eventModalDetail, setEventModalDetail] = useState<SelectEventType>();
   const [openDetail, setOpenDetail] = useState(false);
 
-  const getAuthContext = useContext(AuthContext);
-  const username = getAuthContext.username;
-  const token = useMemo(() => localStorage.getItem('id'), [username]);
-
-  const createNewEvent = async (event: dataObj) => {
+  const createEvent = async (event: dataObj) => {
     const newEvent = { ...event, userId: userId };
     const insertEventRequest = await fetch(NEW_REQ + token, {
       method: 'POST',
@@ -103,8 +104,10 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
       event = { ...event, start: new Date(event.start), end: new Date(event.end), users: event.users }
       return event;
     })
-    setEventsData(procesingRes);
-    setLoaded(true);
+    if (CalendarEventsRequest.status === 200) {
+      setEventsData(procesingRes);
+      setLoaded(true);
+    }
   }
 
   useEffect(() => {
@@ -154,7 +157,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
   }
   return (
     <div>
-      <h3 style={{ marginBottom: '10px', textTransform: 'capitalize' }}>
+      <Typography style={{ marginBottom: 20, marginTop: 10 }} variant="h3" component="h3">
         {username ?
           <FormattedMessage
             id="myCalendar"
@@ -171,9 +174,39 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
             defaultMessage="Calendar"
             description="Calendar"
           />}
-      </h3 >
+      </Typography>
       {
         loaded ? <Calendar
+          navigationButtons={{
+            previous: intl.formatMessage({
+              id: "previous",
+              defaultMessage: "Previous"
+            }),
+            next: intl.formatMessage({
+              id: "next",
+              defaultMessage: "Next"
+            }),
+            today: intl.formatMessage({
+              id: "today",
+              defaultMessage: "Today"
+            }),
+            agenda: intl.formatMessage({
+              id: "agenda",
+              defaultMessage: "Agenda"
+            }),
+            month: intl.formatMessage({
+              id: "month",
+              defaultMessage: "Month"
+            }),
+            week: intl.formatMessage({
+              id: "week",
+              defaultMessage: "Week"
+            }),
+            day: intl.formatMessage({
+              id: "day",
+              defaultMessage: "Day"
+            })
+          }}
           localizer={localizer}
           events={eventsData}
           startAccessor="start"
@@ -184,7 +217,7 @@ const CalendarComponent: FC<CalendarComponentProps> = ({ userId }) => {
           style={{ height: 600 }
           }
         /> : <><WarningIcon style={{ color: 'orange', verticalAlign: "middle", marginRight: 3 }} /><span style={{ verticalAlign: 'middle' }}>API Offline!</span></>}
-      <NewEvent onNewEvent={createNewEvent} OpenDetailClose={OpenNewClose} startDate={newEventSlot.start} endDate={newEventSlot.end} open={openNewModal} />
+      <NewEvent onNewEvent={createEvent} OpenDetailClose={OpenNewClose} startDate={newEventSlot.start} endDate={newEventSlot.end} open={openNewModal} />
       {eventModalDetail && <EventDetails onUpdate={(id, body, close) => updateEvent(id, body, close)} confirmed={eventModalDetail.confirmed} onDelete={deleteEvent} id={eventModalDetail.id} username={eventModalDetail.username} OpenDetailClose={OpenDetailClose} title={eventModalDetail.title} start={eventModalDetail.start} end={
         eventModalDetail.end} description={eventModalDetail.description} open={openDetail} />
       }

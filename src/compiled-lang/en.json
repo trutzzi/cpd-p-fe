@@ -32,14 +32,9 @@
         "value": "Home"
     }],
     "languageText": [{
-            "type": 0,
-            "value": "Language has been set to "
-        },
-        {
-            "type": 1,
-            "value": "lang"
-        }
-    ],
+        "type": 0,
+        "value": "Language has been changed. "
+    }],
     "logout": [{
         "type": 0,
         "value": "Logut"
@@ -75,7 +70,7 @@
     }],
     "signupLink": [{
         "type": 0,
-        "value": "Signup"
+        "value": "Members areea"
     }],
     "title": [{
         "type": 0,
@@ -113,6 +108,10 @@
         "type": 0,
         "value": "Edit"
     }],
+    "create": [{
+        "type": 0,
+        "value": "Create"
+    }],
     "agree": [{
         "type": 0,
         "value": "Agree"
@@ -124,6 +123,33 @@
     "deleteConfirmMessage": [{
         "type": 0,
         "value": "Are you sure you want to delete permanently this event?"
+    }],
+    "agenda": [{
+        "type": 0,
+        "value": "Agenda"
+    }],
+    "previous": [{
+        "type": 0,
+        "value": "Previews"
+    }],
+    "next": [{
+        "type": 0,
+        "value": "Next"
+    }],
+    "today": [{
+        "type": 0,
+        "value": "Today"
+    }],
+    "month": [{
+        "type": 0,
+        "value": "Month"
+    }],
+    "week": [{
+        "type": 0,
+        "value": "Week"
+    }],
+    "day": [{
+        "type": 0,
+        "value": "Day"
     }]
-
 }

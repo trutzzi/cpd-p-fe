@@ -33,7 +33,7 @@
     }],
     "languageText": [{
             "type": 0,
-            "value": "Limba a fost setata in "
+            "value": "Limba a fost schimbata "
         },
         {
             "type": 1,
@@ -75,7 +75,7 @@
     }],
     "signupLink": [{
         "type": 0,
-        "value": "Creaza"
+        "value": "Zona membrii"
     }],
     "title": [{
         "type": 0,
@@ -113,6 +113,10 @@
         "type": 0,
         "value": "Editeaza"
     }],
+    "create": [{
+        "type": 0,
+        "value": "Creaza"
+    }],
     "agree": [{
         "type": 0,
         "value": "De accord"
@@ -124,6 +128,38 @@
     "deleteConfirmMessage": [{
         "type": 0,
         "value": "Sunteti sigur ca vreti sa stergeti acest eveniment definitiv?"
+    }],
+    "password": [{
+        "type": 0,
+        "value": "Parola"
+    }],
+    "agenda": [{
+        "type": 0,
+        "value": "Agenda"
+    }],
+    "previous": [{
+        "type": 0,
+        "value": "Precedent"
+    }],
+    "next": [{
+        "type": 0,
+        "value": "Urmatorul"
+    }],
+    "today": [{
+        "type": 0,
+        "value": "Azi"
+    }],
+    "month": [{
+        "type": 0,
+        "value": "Luna"
+    }],
+    "week": [{
+        "type": 0,
+        "value": "Saptamana"
+    }],
+    "day": [{
+        "type": 0,
+        "value": "Zi"
     }]
 
 }
